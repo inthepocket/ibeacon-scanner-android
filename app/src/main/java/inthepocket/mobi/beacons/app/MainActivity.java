@@ -10,10 +10,10 @@ import com.tbruyelle.rxpermissions.RxPermissions;
 
 import java.util.UUID;
 
+import inthepocket.mobi.beacons.app.rxjava.RxObserver;
 import inthepocket.mobi.beacons.ibeaconscanning.Error;
 import inthepocket.mobi.beacons.ibeaconscanning.Region;
 import inthepocket.mobi.beacons.ibeaconscanning.RegionManager;
-import rx.Observer;
 
 public class MainActivity extends AppCompatActivity implements RegionManager.Callback
 {
@@ -34,20 +34,8 @@ public class MainActivity extends AppCompatActivity implements RegionManager.Cal
 
         RxPermissions.getInstance(this)
                 .request(Manifest.permission.ACCESS_COARSE_LOCATION)
-                .subscribe(new Observer<Boolean>()
+                .subscribe(new RxObserver<Boolean>()
                            {
-                               @Override
-                               public void onCompleted()
-                               {
-
-                               }
-
-                               @Override
-                               public void onError(final Throwable e)
-                               {
-
-                               }
-
                                @Override
                                public void onNext(final Boolean granted)
                                {
