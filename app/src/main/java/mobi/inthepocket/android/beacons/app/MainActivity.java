@@ -67,9 +67,9 @@ public class MainActivity extends AppCompatActivity implements RegionManager.Cal
         final String logMessage = String.format("Entered region with UUID %s and major %s and minor %s.", region.getId1(), region.getId2(), region.getId3());
         Log.d(TAG, logMessage);
 
-        final String logText = MainActivity.this.textViewLog.getText() != null ? MainActivity.this.textViewLog.getText().toString() : "";
+        final String logText = this.textViewLog.getText() != null ? this.textViewLog.getText().toString() : "";
 
-        MainActivity.this.textViewLog.setText(logMessage + "\n" + logText);
+        this.textViewLog.setText(logMessage + "\n" + logText);
 
     }
 
