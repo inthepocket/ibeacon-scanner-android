@@ -1,0 +1,36 @@
+apply plugin: 'com.android.application'
+
+android {
+
+    compileSdkVersion 24
+    buildToolsVersion "24.0.2"
+
+    defaultConfig {
+
+        applicationId "inthepocket.mobi.beacons.app"
+        minSdkVersion 11
+        targetSdkVersion 24
+        versionCode 1
+        versionName "1.0"
+    }
+
+    buildTypes {
+
+        debug {
+            minifyEnabled false
+        }
+
+        release {
+            minifyEnabled false
+        }
+    }
+}
+
+dependencies {
+    compile project(':ibeaconscanner') // library to scan for iBeacons
+    compile 'com.android.support:appcompat-v7:24.2.1'
+    compile 'io.reactivex:rxjava:1.2.0' // rxjava
+    compile 'com.tbruyelle.rxpermissions:rxpermissions:0.7.0@aar' // library to handle location permission
+
+    testCompile 'junit:junit:4.12'
+}

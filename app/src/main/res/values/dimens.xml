@@ -1,0 +1,5 @@
+<resources>
+    <dimen name="page_margin">16dp</dimen>
+
+    <dimen name="padding_large">16dp</dimen>
+</resources>
