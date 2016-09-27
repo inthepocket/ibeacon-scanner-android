@@ -42,8 +42,6 @@ public class RegionManager
     {
         this.bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         this.bluetoothLeScanner = this.bluetoothAdapter.getBluetoothLeScanner();
-
-        //todo
     }
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_ADMIN)
@@ -106,10 +104,10 @@ public class RegionManager
 
                     if (RegionManager.this.callback != null)
                     {
-                        final Region region = new Region.RegionBuilder()
-                                .setId1(uuid)
-                                .setId2(major)
-                                .setId3(minor)
+                        final Region region = new Region.Builder()
+                                .setUUID(uuid)
+                                .setMajor(major)
+                                .setMinor(minor)
                                 .build();
 
                         RegionManager.this.callback.didEnterRegion(region);

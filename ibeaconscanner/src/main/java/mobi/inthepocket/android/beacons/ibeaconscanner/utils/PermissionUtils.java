@@ -27,22 +27,23 @@ public final class PermissionUtils
      *
      * @param context    where from you determine if a permission is granted
      * @return true if you have any location permission or the sdk is below Android M.
+     * @throws InvalidParameterException if {@param context} is null
      */
-    public static boolean isLocationGranted(final Context context)
+    public static boolean isLocationGranted(final Context context) throws InvalidParameterException
     {
         if (context == null)
         {
             throw new InvalidParameterException("context is null");
         }
 
-        return (!isMarshmallow()
+        return (!isMarshmallowOrLater()
                 || (isPermissionGranted(context, Manifest.permission.ACCESS_COARSE_LOCATION) || isPermissionGranted(context, Manifest.permission.ACCESS_FINE_LOCATION)));
     }
 
     /**
      * @return true if the current sdk is above or equal to Android M
      */
-    private static boolean isMarshmallow()
+    private static boolean isMarshmallowOrLater()
     {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
     }

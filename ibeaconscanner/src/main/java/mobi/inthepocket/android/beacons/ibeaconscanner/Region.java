@@ -1,5 +1,8 @@
 package mobi.inthepocket.android.beacons.ibeaconscanner;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 import java.security.InvalidParameterException;
 import java.util.UUID;
 
@@ -20,33 +23,35 @@ public final class Region implements mobi.inthepocket.android.beacons.ibeaconsca
     {
     }
 
-    private Region(final RegionBuilder regionBuilder)
+    private Region(final Builder builder)
     {
-        this.uuid = regionBuilder.uuid;
-        this.major = regionBuilder.major;
-        this.minor = regionBuilder.minor;
-        this.identifier = regionBuilder.identifier;
+        this.uuid = builder.uuid;
+        this.major = builder.major;
+        this.minor = builder.minor;
+        this.identifier = builder.identifier;
     }
 
+    @NonNull
     @Override
-    public UUID getId1()
+    public UUID getUUID()
     {
         return this.uuid;
     }
 
     @Override
-    public int getId2()
+    public int getMajor()
     {
         return this.major;
     }
 
     @Override
-    public int getId3()
+    public int getMinor()
     {
         return this.minor;
     }
 
     @Override
+    @Nullable
     public String getIdentifier()
     {
         return this.identifier;
@@ -54,49 +59,81 @@ public final class Region implements mobi.inthepocket.android.beacons.ibeaconsca
 
     //region Builder
 
-    public static class RegionBuilder
+    public static class Builder
     {
         private UUID uuid;
         private int major;
         private int minor;
         private String identifier;
 
-        public RegionBuilder setId1(final UUID uuid)
+        public Builder()
+        {
+        }
+
+        /**
+         *
+         * @param uuid
+         * @return
+         */
+        public Builder setUUID(@NonNull final UUID uuid)
         {
             this.uuid = uuid;
 
             return this;
         }
 
-        public RegionBuilder setId1(final String uuid)
+        /**
+         *
+         * @param uuid that will get parsed with {@link UUID#fromString(String)}
+         * @return
+         */
+        public Builder setUUID(@NonNull final String uuid)
         {
             this.uuid = UUID.fromString(uuid);
 
             return this;
         }
 
-        public RegionBuilder setId2(final int major)
+        /**
+         * Major should be an integer between 0 and {@link #MAJOR_MINOR_MAX_VALUE}.
+         *
+         * @param major
+         * @return
+         */
+        public Builder setMajor(final int major)
         {
             this.major = major;
 
             return this;
         }
 
-        public RegionBuilder setId3(final int minor)
+        /**
+         * Minor should be an integer between 0 and {@link #MAJOR_MINOR_MAX_VALUE}.
+         *
+         * @param minor
+         * @return
+         */
+        public Builder setMinor(final int minor)
         {
             this.minor = minor;
 
             return this;
         }
 
-        public RegionBuilder setIdentifier(final String identifier)
+        public Builder setIdentifier(final String identifier)
         {
             this.identifier = identifier;
 
             return this;
         }
 
-        public Region build()
+        /**
+         * If {@link #uuid}, {@link #major} and {@link #minor} are valid, build returns a new {@link Region} object.
+         *
+         * @return {@link Region} if the parameters are valid
+         * @throws InvalidParameterException
+         */
+        public Region build() throws InvalidParameterException
         {
             if (this.uuid == null)
             {

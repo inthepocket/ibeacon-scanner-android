@@ -8,8 +8,8 @@ import java.util.UUID;
 
 public interface Region
 {
-    UUID getId1();
-    int getId2();
-    int getId3();
+    UUID getUUID();
+    int getMajor();
+    int getMinor();
     String getIdentifier();
 }

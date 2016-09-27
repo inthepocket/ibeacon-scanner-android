@@ -27,7 +27,8 @@ public final class ScanFilterUtils
         final ScanFilter.Builder builder = new ScanFilter.Builder();
 
         // the manufacturer data byte is the filter!
-        final byte[] manufacturerData = new byte[]{
+        final byte[] manufacturerData = new byte[]
+        {
                 0,0,
 
                 0,0,0,0,
@@ -42,7 +43,8 @@ public final class ScanFilterUtils
         };
 
         // the mask tells what bytes in the filter need to match, 1 if it has to match, 0 if not
-        final byte[] manufacturerDataMask = new byte[]{
+        final byte[] manufacturerDataMask = new byte[]
+        {
                 0,0,
 
                 //uuid
@@ -61,13 +63,13 @@ public final class ScanFilterUtils
         };
 
         // copy UUID (with no dashes) into data array
-        System.arraycopy(ConversionUtils.UuidToByteArray(region.getId1()), 0, manufacturerData, 2, 16); // or 21?
+        System.arraycopy(ConversionUtils.UuidToByteArray(region.getUUID()), 0, manufacturerData, 2, 16); // or 21?
 
         // copy major into data array
-        System.arraycopy(ConversionUtils.integerToByteArray(region.getId2()), 0, manufacturerData, 18, 2);
+        System.arraycopy(ConversionUtils.integerToByteArray(region.getMajor()), 0, manufacturerData, 18, 2);
 
         // copy minor into data array
-        System.arraycopy(ConversionUtils.integerToByteArray(region.getId3()), 0, manufacturerData, 20, 2);
+        System.arraycopy(ConversionUtils.integerToByteArray(region.getMinor()), 0, manufacturerData, 20, 2);
 
         builder.setManufacturerData(
                 MANUFACTURER_ID,

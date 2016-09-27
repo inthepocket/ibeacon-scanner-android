@@ -41,10 +41,10 @@ public class MainActivity extends AppCompatActivity implements RegionManager.Cal
                                {
                                    if (granted)
                                    {
-                                       final Region region = new Region.RegionBuilder()
-                                               .setId1(UUID.fromString(EXAMPLE_BEACON_1_UUID))
-                                               .setId2(EXAMPLE_BEACON_1_MAJOR)
-                                               .setId3(EXAMPLE_BEACON_1_MINOR).build();
+                                       final Region region = new Region.Builder()
+                                               .setUUID(UUID.fromString(EXAMPLE_BEACON_1_UUID))
+                                               .setMajor(EXAMPLE_BEACON_1_MAJOR)
+                                               .setMinor(EXAMPLE_BEACON_1_MINOR).build();
 
                                        final RegionManager regionManager = new RegionManager();
                                        regionManager.startMonitoring(region, MainActivity.this);
@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements RegionManager.Cal
     @Override
     public void didEnterRegion(final Region region)
     {
-        final String logMessage = String.format("Entered region with UUID %s and major %s and minor %s.", region.getId1(), region.getId2(), region.getId3());
+        final String logMessage = String.format("Entered region with UUID %s and major %s and minor %s.", region.getUUID(), region.getMajor(), region.getMinor());
         Log.d(TAG, logMessage);
 
         final String logText = this.textViewLog.getText() != null ? this.textViewLog.getText().toString() : "";

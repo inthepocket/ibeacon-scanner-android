@@ -21,13 +21,13 @@ public class ConversionUtilsTest
     @Test
     public void testExampleBeacon1ScanFilter() throws Exception
     {
-        final Region region = new Region.RegionBuilder()
-                .setId1(EXAMPLE_BEACON_1_UUID)
-                .setId2(EXAMPLE_BEACON_1_MAJOR)
-                .setId3(EXAMPLE_BEACON_1_MINOR)
+        final Region region = new Region.Builder()
+                .setUUID(EXAMPLE_BEACON_1_UUID)
+                .setMajor(EXAMPLE_BEACON_1_MAJOR)
+                .setMinor(EXAMPLE_BEACON_1_MINOR)
                 .build();
 
-        byte[] byteArray = ConversionUtils.UuidToByteArray(region.getId1());
+        byte[] byteArray = ConversionUtils.UuidToByteArray(region.getUUID());
 
         assertNotNull(byteArray);
     }
