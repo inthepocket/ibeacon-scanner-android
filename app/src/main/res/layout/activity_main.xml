@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="inthepocket.mobi.beacons.app.MainActivity">
+    tools:context="mobi.inthepocket.android.beacons.app.MainActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
