@@ -31,6 +31,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:24.2.1'
     compile 'io.reactivex:rxjava:1.2.0' // rxjava
     compile 'com.tbruyelle.rxpermissions:rxpermissions:0.7.0@aar' // library to handle location permission
+    compile 'com.facebook.stetho:stetho:1.4.1' // stetho to easily see our database
 
     testCompile 'junit:junit:4.12'
 }

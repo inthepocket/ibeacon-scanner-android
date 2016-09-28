@@ -1,8 +1,7 @@
-package mobi.inthepocket.android.beacons.ibeaconscanner.ibeaconscanning;
+package mobi.inthepocket.android.beacons.ibeaconscanner;
 
 import org.junit.Test;
 
-import mobi.inthepocket.android.beacons.ibeaconscanner.Region;
 import mobi.inthepocket.android.beacons.ibeaconscanner.utils.ConversionUtils;
 
 import static org.junit.Assert.assertNotNull;
@@ -27,7 +26,7 @@ public class ConversionUtilsTest
                 .setMinor(EXAMPLE_BEACON_1_MINOR)
                 .build();
 
-        byte[] byteArray = ConversionUtils.UuidToByteArray(region.getUUID());
+        final byte[] byteArray = ConversionUtils.UuidToByteArray(region.getUUID());
 
         assertNotNull(byteArray);
     }
