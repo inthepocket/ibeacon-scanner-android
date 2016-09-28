@@ -1,4 +1,4 @@
-<manifest package="inthepocket.mobi.beacons.ibeaconscanning"
+<manifest package="mobi.inthepocket.android.beacons.ibeaconscanner.ibeaconscanning"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.BLUETOOTH"/>

@@ -7,7 +7,7 @@ android {
 
     defaultConfig {
 
-        applicationId "inthepocket.mobi.beacons.app"
+        applicationId "mobi.inthepocket.android.beacons.app"
         minSdkVersion 11
         targetSdkVersion 24
         versionCode 1
