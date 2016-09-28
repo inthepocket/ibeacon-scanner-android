@@ -31,12 +31,16 @@ public final class ScanFilterUtils
         {
                 0,0,
 
+                // uuid
                 0,0,0,0,
                 0,0,
                 0,0,
                 0,0,0,0,0,0,0,0,
 
+                // major
                 0,0,
+
+                // minor
                 0,0,
 
                 0
@@ -47,23 +51,23 @@ public final class ScanFilterUtils
         {
                 0,0,
 
-                //uuid
+                // uuid
                 1,1,1,1,
                 1,1,
                 1,1,
                 1,1,1,1,1,1,1,1,
 
-                //major
+                // major
                 1,1,
 
-                //minor
+                // minor
                 1,1,
 
                 0
         };
 
         // copy UUID (with no dashes) into data array
-        System.arraycopy(ConversionUtils.UuidToByteArray(region.getUUID()), 0, manufacturerData, 2, 16); // or 21?
+        System.arraycopy(ConversionUtils.UuidToByteArray(region.getUUID()), 0, manufacturerData, 2, 16);
 
         // copy major into data array
         System.arraycopy(ConversionUtils.integerToByteArray(region.getMajor()), 0, manufacturerData, 18, 2);
