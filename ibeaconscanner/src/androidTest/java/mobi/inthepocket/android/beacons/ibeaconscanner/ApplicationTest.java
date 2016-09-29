@@ -1,4 +1,4 @@
-package mobi.inthepocket.android.beacons.ibeaconscanner.ibeaconscanning;
+package mobi.inthepocket.android.beacons.ibeaconscanner;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

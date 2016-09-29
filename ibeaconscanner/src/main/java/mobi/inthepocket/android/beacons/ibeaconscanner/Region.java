@@ -1,15 +1,19 @@
 package mobi.inthepocket.android.beacons.ibeaconscanner;
 
+import android.annotation.TargetApi;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.security.InvalidParameterException;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
  * Created by eliaslecomte on 23/09/2016.
  */
 
+@TargetApi(Build.VERSION_CODES.KITKAT)
 public final class Region implements mobi.inthepocket.android.beacons.ibeaconscanner.interfaces.Region
 {
     private final static int MAJOR_MINOR_MAX_VALUE = 65535;
@@ -56,6 +60,50 @@ public final class Region implements mobi.inthepocket.android.beacons.ibeaconsca
     {
         return this.identifier;
     }
+
+    //region Equals
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(this.uuid, this.major, this.minor);
+    }
+
+    @Override
+    public boolean equals(final Object o)
+    {
+        if (this == o)
+        {
+            return true;
+        }
+
+        if (o == null || this.getClass() != o.getClass())
+        {
+            return false;
+        }
+
+        final Region that = (Region)o;
+
+        if (this.uuid != that.uuid)
+        {
+            return false;
+        }
+
+        if (this.major != that.major)
+        {
+            return false;
+        }
+
+        //noinspection RedundantIfStatement
+        if (this.minor != that.minor)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    //endregion
 
     //region Builder
 

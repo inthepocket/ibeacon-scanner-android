@@ -3,7 +3,6 @@ package mobi.inthepocket.android.beacons.app;
 import android.Manifest;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.TextView;
 
 import com.tbruyelle.rxpermissions.RxPermissions;
@@ -46,8 +45,8 @@ public class MainActivity extends AppCompatActivity implements RegionManager.Cal
                                                .setMajor(EXAMPLE_BEACON_1_MAJOR)
                                                .setMinor(EXAMPLE_BEACON_1_MINOR).build();
 
-                                       final RegionManager regionManager = new RegionManager();
-                                       regionManager.startMonitoring(region, MainActivity.this);
+                                       final RegionManager regionManager = new RegionManager(MainActivity.this, MainActivity.this);
+                                       regionManager.startMonitoring(region);
                                    }
                                    else
                                    {
@@ -64,25 +63,32 @@ public class MainActivity extends AppCompatActivity implements RegionManager.Cal
     @Override
     public void didEnterRegion(final Region region)
     {
-        final String logMessage = String.format("Entered region with UUID %s and major %s and minor %s.", region.getUUID(), region.getMajor(), region.getMinor());
-        Log.d(TAG, logMessage);
-
-        final String logText = this.textViewLog.getText().toString();
-
-        this.textViewLog.setText(logMessage + "\n" + logText);
-
+        final String logMessage = String.format("Entered region with UUID %s and major %s and minor %s.\n", region.getUUID(), region.getMajor(), region.getMinor());
+        this.updateLog(logMessage);
     }
 
     @Override
     public void didExitRegion(final Region region)
     {
-
+        final String logMessage = String.format("Exited region with UUID %s and major %s and minor %s.", region.getUUID(), region.getMajor(), region.getMinor());
+        this.updateLog(logMessage);
     }
 
     @Override
     public void monitoringDidFail(final Error error)
     {
 
+    }
+
+    //endregion
+
+    //region View
+
+    private void updateLog(final String logMessage)
+    {
+        final String logText = this.textViewLog.getText().toString();
+
+        this.textViewLog.setText(logMessage + "\n" + logText);
     }
 
     //endregion
