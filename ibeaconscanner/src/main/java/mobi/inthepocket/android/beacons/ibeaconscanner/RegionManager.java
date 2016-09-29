@@ -19,8 +19,8 @@ import android.support.annotation.RequiresPermission;
 import java.util.ArrayList;
 import java.util.List;
 
-import mobi.inthepocket.android.beacons.ibeaconscanner.handler.AddRegionsHandler;
-import mobi.inthepocket.android.beacons.ibeaconscanner.handler.TimeoutHandler;
+import mobi.inthepocket.android.beacons.ibeaconscanner.handlers.AddRegionsHandler;
+import mobi.inthepocket.android.beacons.ibeaconscanner.handlers.TimeoutHandler;
 import mobi.inthepocket.android.beacons.ibeaconscanner.utils.ScanFilterUtils;
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)

@@ -1,4 +1,4 @@
-package mobi.inthepocket.android.beacons.ibeaconscanner.handler;
+package mobi.inthepocket.android.beacons.ibeaconscanner.handlers;
 
 import android.os.Handler;
 import android.util.SparseArray;
@@ -24,6 +24,7 @@ public abstract class TimeoutHandler<T>
 
     public synchronized void passItem(final T item)
     {
+        // using the {@link T#hashCode} could collide but the chances of this happening are relatively low
         final int id = item.hashCode();
 
         if (this.sparseArray.get(id) != null)

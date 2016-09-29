@@ -17,10 +17,10 @@ import java.util.UUID;
 
 import mobi.inthepocket.android.beacons.ibeaconscanner.database.BeaconSeen;
 import mobi.inthepocket.android.beacons.ibeaconscanner.database.BeaconsSeenTable;
-import mobi.inthepocket.android.beacons.ibeaconscanner.handler.TimeoutHandler;
+import mobi.inthepocket.android.beacons.ibeaconscanner.handlers.TimeoutHandler;
 import mobi.inthepocket.android.beacons.ibeaconscanner.providers.BeaconsSeenProvider;
 import mobi.inthepocket.android.beacons.ibeaconscanner.utils.ConversionUtils;
-import mobi.inthepocket.android.beacons.ibeaconscanner.handler.OnExitHandler;
+import mobi.inthepocket.android.beacons.ibeaconscanner.handlers.OnExitHandler;
 
 import static android.content.ContentValues.TAG;
 

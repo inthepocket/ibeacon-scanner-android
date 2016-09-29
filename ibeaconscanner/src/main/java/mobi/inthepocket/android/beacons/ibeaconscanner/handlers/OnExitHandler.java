@@ -1,4 +1,4 @@
-package mobi.inthepocket.android.beacons.ibeaconscanner.handler;
+package mobi.inthepocket.android.beacons.ibeaconscanner.handlers;
 
 import android.support.annotation.NonNull;
 
@@ -7,7 +7,7 @@ import mobi.inthepocket.android.beacons.ibeaconscanner.Region;
 /**
  * Created by eliaslecomte on 28/09/2016.
  *
- * This class generates {@link mobi.inthepocket.android.beacons.ibeaconscanner.handler.TimeoutHandler.TimeoutCallback#timedOut(Object)}
+ * This class generates {@link mobi.inthepocket.android.beacons.ibeaconscanner.handlers.TimeoutHandler.TimeoutCallback#timedOut(Object)}
  * when a region has not been entered for {@link TimeoutHandler#timeoutInMillis}.
  */
 

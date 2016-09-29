@@ -1,4 +1,4 @@
-package mobi.inthepocket.android.beacons.ibeaconscanner.handler;
+package mobi.inthepocket.android.beacons.ibeaconscanner.handlers;
 
 /**
  * Created by eliaslecomte on 28/09/2016.
