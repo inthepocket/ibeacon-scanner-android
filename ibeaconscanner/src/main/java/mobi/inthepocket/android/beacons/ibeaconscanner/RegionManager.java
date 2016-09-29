@@ -28,16 +28,33 @@ public class RegionManager
 {
     private final static String TAG = RegionManager.class.getSimpleName();
 
+    private static RegionManager instance;
+
     private final ScannerScanCallback scannerScanCallback;
     private final BluetoothAdapter bluetoothAdapter;
     private final BluetoothLeScanner bluetoothLeScanner;
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public RegionManager(@NonNull final Context context, @NonNull final Callback callback) // todo get Application Context with an Init method
+    public static RegionManager getInstance()
     {
-        final ContentResolver contentResolver = context.getApplicationContext().getContentResolver();
+        if (instance == null)
+        {
+            throw new IllegalStateException("You need to initialize RegionManager first in your Application class or in your Service onCreate");
+        }
 
-        this.scannerScanCallback = new ScannerScanCallback(contentResolver, callback, BuildConfig.BEACON_EXIT_TIME_IN_MILLIS);
+        return instance;
+    }
+
+    public static void initialize(@NonNull final Initializer initializer)
+    {
+        instance = new RegionManager(initializer);
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private RegionManager(@NonNull final Initializer initializer)
+    {
+        final ContentResolver contentResolver = initializer.context.getContentResolver();
+
+        this.scannerScanCallback = new ScannerScanCallback(contentResolver, initializer.exitTimeoutInMillis);
         this.bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         this.bluetoothLeScanner = this.bluetoothAdapter.getBluetoothLeScanner();
     }
@@ -47,8 +64,24 @@ public class RegionManager
     public void startMonitoring(@NonNull final Region region)
     {
         final ScanFilter scanFilter = ScanFilterUtils.getScanFilter(region);
+    }
 
-        this.bluetoothLeScanner.startScan(Arrays.asList(scanFilter), getScanSettings(), this.scannerScanCallback);
+    //region Properties
+
+    public static Initializer newInitializer(@NonNull final Context context)
+    {
+        return new Initializer(context);
+    }
+
+    /**
+     * Set the {@link Callback} that will get notified for {@link Region} enters, exits or if an {@link Error}
+     * happened.
+     *
+     * @param callback
+     */
+    public void setCallback(@NonNull final Callback callback)
+    {
+        this.scannerScanCallback.setCallback(callback);
     }
 
     //region Helpers
@@ -60,6 +93,35 @@ public class RegionManager
         builder.setReportDelay(0);
         builder.setScanMode(ScanSettings.SCAN_MODE_LOW_POWER);
         return builder.build();
+    }
+
+
+    //region Initializer
+
+    public static final class Initializer
+    {
+        private final Context context;
+        private long exitTimeoutInMillis;
+
+        private Initializer(@NonNull final Context context)
+        {
+            this.context = context.getApplicationContext();
+        }
+
+        public void setExitTimeoutInMillis(final long exitTimeoutInMillis)
+        {
+            this.exitTimeoutInMillis = exitTimeoutInMillis;
+        }
+
+        public Initializer build()
+        {
+            if (this.exitTimeoutInMillis == 0)
+            {
+                this.exitTimeoutInMillis = BuildConfig.BEACON_EXIT_TIME_IN_MILLIS;
+            }
+
+            return this;
+        }
     }
 
     //endregion
