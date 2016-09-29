@@ -16,15 +16,15 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresPermission;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
+import mobi.inthepocket.android.beacons.ibeaconscanner.handler.AddRegionsHandler;
+import mobi.inthepocket.android.beacons.ibeaconscanner.handler.TimeoutHandler;
 import mobi.inthepocket.android.beacons.ibeaconscanner.utils.ScanFilterUtils;
 
-/**
- *
- */
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-public class RegionManager
+public class RegionManager implements TimeoutHandler.TimeoutCallback<Object>
 {
     private final static String TAG = RegionManager.class.getSimpleName();
 
@@ -33,6 +33,10 @@ public class RegionManager
     private final ScannerScanCallback scannerScanCallback;
     private final BluetoothAdapter bluetoothAdapter;
     private final BluetoothLeScanner bluetoothLeScanner;
+
+    private final AddRegionsHandler addRegionsHandler;
+    private final Object timeoutObject;
+    private final List<Region> regions;
 
     public static RegionManager getInstance()
     {
@@ -57,13 +61,32 @@ public class RegionManager
         this.scannerScanCallback = new ScannerScanCallback(contentResolver, initializer.exitTimeoutInMillis);
         this.bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         this.bluetoothLeScanner = this.bluetoothAdapter.getBluetoothLeScanner();
+
+        this.addRegionsHandler = new AddRegionsHandler(this, BuildConfig.ADD_REGION_TIMEOUT_IN_MILLIS);
+        this.timeoutObject = new Object();
+        this.regions = new ArrayList<>();
     }
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_ADMIN)
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public void startMonitoring(@NonNull final Region region)
     {
-        final ScanFilter scanFilter = ScanFilterUtils.getScanFilter(region);
+        this.regions.add(region);
+        this.addRegionsHandler.passItem(this.timeoutObject);
+    }
+
+    @RequiresPermission(Manifest.permission.BLUETOOTH_ADMIN)
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public void stopMonitoring(@NonNull final Region region)
+    {
+        this.regions.remove(region);
+        this.addRegionsHandler.passItem(this.timeoutObject);
+    }
+
+    public void stopAllMonitoring()
+    {
+        this.regions.clear();
+        this.bluetoothLeScanner.stopScan(RegionManager.this.scannerScanCallback);
     }
 
     //region Properties
@@ -84,6 +107,8 @@ public class RegionManager
         this.scannerScanCallback.setCallback(callback);
     }
 
+    //endregion
+
     //region Helpers
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -95,6 +120,32 @@ public class RegionManager
         return builder.build();
     }
 
+    //region TimeoutHandler.TimeoutCallback<Void>
+
+    @Override
+    public void timedOut(final Object anObject)
+    {
+        // no regions have been added for {@link BuildConfig#ADD_REGION_TIMEOUT_IN_MILLIS}, stop previous
+        // scan and start a new scan with the regions we should monitor.
+
+        // stop scanning
+        this.bluetoothLeScanner.stopScan(RegionManager.this.scannerScanCallback);
+
+        // start scanning
+        if (this.regions.size() > 0)
+        {
+            final List<ScanFilter> scanFilters = new ArrayList<>();
+
+            for (final Region region : this.regions)
+            {
+                scanFilters.add(ScanFilterUtils.getScanFilter(region));
+            }
+
+            this.bluetoothLeScanner.startScan(scanFilters, getScanSettings(), this.scannerScanCallback);
+        }
+    }
+
+    //endregion
 
     //region Initializer
 
@@ -126,12 +177,14 @@ public class RegionManager
 
     //endregion
 
-    //region Callback interface
+    //region Callback
 
     public interface Callback
     {
         void didEnterRegion(Region region);
+
         void didExitRegion(Region region);
+
         void monitoringDidFail(Error error);
     }
 
