@@ -5,6 +5,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.support.annotation.NonNull;
 
 import java.security.InvalidParameterException;
 
@@ -29,7 +30,7 @@ public final class PermissionUtils
      * @return true if you have any location permission or the sdk is below Android M.
      * @throws InvalidParameterException if {@param context} is null
      */
-    public static boolean isLocationGranted(final Context context) throws InvalidParameterException
+    public static boolean isLocationGranted(@NonNull final Context context) throws InvalidParameterException
     {
         if (context == null)
         {
@@ -56,7 +57,7 @@ public final class PermissionUtils
      * @return true if you have the permission, or false if not
      */
     @TargetApi(Build.VERSION_CODES.M)
-    private static boolean isPermissionGranted(final Context context, final String permission)
+    private static boolean isPermissionGranted(@NonNull final Context context, @NonNull final String permission)
     {
         return context.checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED;
     }

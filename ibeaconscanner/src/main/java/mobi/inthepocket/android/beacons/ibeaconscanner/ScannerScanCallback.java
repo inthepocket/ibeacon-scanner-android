@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.SystemClock;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -40,7 +41,7 @@ public class ScannerScanCallback extends ScanCallback implements OnExitHandler.E
     private final RegionManager.Callback callback;
     private final long postDelayedInMillis;
 
-    public ScannerScanCallback(final ContentResolver contentResolver, final RegionManager.Callback callback, final long postDelayedInMillis)
+    public ScannerScanCallback(@NonNull final ContentResolver contentResolver, @NonNull final RegionManager.Callback callback, final long postDelayedInMillis)
     {
         this.contentResolver = contentResolver;
         this.onExitHandler = new OnExitHandler(this, postDelayedInMillis);
@@ -193,7 +194,7 @@ public class ScannerScanCallback extends ScanCallback implements OnExitHandler.E
         }
     }
 
-    private static Uri getItemUri(final Region region)
+    private static Uri getItemUri(@NonNull final Region region)
     {
         return Uri.withAppendedPath(BeaconsSeenProvider.CONTENT_URI_ITEM, region.getUUID().toString()
                 + "/" + region.getMajor()
@@ -205,7 +206,7 @@ public class ScannerScanCallback extends ScanCallback implements OnExitHandler.E
     //region OnExitHandler.ExitCallback
 
     @Override
-    public void didExit(final Region region)
+    public void didExit(@NonNull final Region region)
     {
         // exit happened, pass to callback
         this.callback.didExitRegion(region);

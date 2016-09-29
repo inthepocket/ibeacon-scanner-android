@@ -33,7 +33,7 @@ public class RegionManager
     private final BluetoothLeScanner bluetoothLeScanner;
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public RegionManager(final Context context, @NonNull final Callback callback) // todo get Application Context with an Init method
+    public RegionManager(@NonNull final Context context, @NonNull final Callback callback) // todo get Application Context with an Init method
     {
         final ContentResolver contentResolver = context.getApplicationContext().getContentResolver();
 

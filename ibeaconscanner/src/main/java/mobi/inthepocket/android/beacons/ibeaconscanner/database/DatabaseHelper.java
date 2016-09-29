@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DatabaseHelper extends SQLiteOpenHelper
 {
-    private final static String databaseName = "ibeaconscanner";
+    private final static String databaseName = "ibeacon_scanner";
     private final static int databaseVersion = 1;
 
     final BeaconsSeenTable beaconsSeenTable;

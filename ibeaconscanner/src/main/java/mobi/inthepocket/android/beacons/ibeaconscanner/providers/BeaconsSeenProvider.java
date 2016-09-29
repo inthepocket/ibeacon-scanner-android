@@ -59,10 +59,9 @@ public class BeaconsSeenProvider extends ContentProvider
             case ITEM:
 
                 final List<String> pathSegments = uri.getPathSegments();
-                final int size = pathSegments.size();
-                final String uuid = pathSegments.get(size - 3);
-                final String major = pathSegments.get(size - 2);
-                final String minor = pathSegments.get(size - 1);
+                final String uuid = pathSegments.get(1);
+                final String major = pathSegments.get(2);
+                final String minor = pathSegments.get(3);
 
                 selection = BeaconsSeenTable.COLUMN_BEACON_UUID + " = ? AND "
                         + BeaconsSeenTable.COLUMN_BEACON_MAJOR + " = ? AND "
@@ -145,10 +144,9 @@ public class BeaconsSeenProvider extends ContentProvider
         if (uriMatcher.match(uri) == ITEM)
         {
             final List<String> pathSegments = uri.getPathSegments();
-            final int size = pathSegments.size();
-            final String uuid = pathSegments.get(size - 3);
-            final String major = pathSegments.get(size - 2);
-            final String minor = pathSegments.get(size - 1);
+            final String uuid = pathSegments.get(1);
+            final String major = pathSegments.get(2);
+            final String minor = pathSegments.get(3);
 
             selection = BeaconsSeenTable.COLUMN_BEACON_UUID + " = ? AND "
                     + BeaconsSeenTable.COLUMN_BEACON_MAJOR + " = ? AND "

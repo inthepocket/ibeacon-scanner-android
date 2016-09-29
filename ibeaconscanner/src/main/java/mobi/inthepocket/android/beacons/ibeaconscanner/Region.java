@@ -94,6 +94,7 @@ public final class Region implements mobi.inthepocket.android.beacons.ibeaconsca
             return false;
         }
 
+        //noinspection RedundantIfStatement
         if (this.minor != that.minor)
         {
             return false;

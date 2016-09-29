@@ -101,10 +101,10 @@ public class DatabaseUtils
         final String key = new StringBuilder(projectionKey).append(columnName).toString();
         if (sIndices.containsKey(key))
         {
-            return sIndices.get(key).intValue();
+            return sIndices.get(key);
         }
         final int calculatedIndex = c.getColumnIndexOrThrow(columnName);
-        sIndices.put(key, Integer.valueOf(calculatedIndex));
+        sIndices.put(key, calculatedIndex);
 
         return calculatedIndex;
     }

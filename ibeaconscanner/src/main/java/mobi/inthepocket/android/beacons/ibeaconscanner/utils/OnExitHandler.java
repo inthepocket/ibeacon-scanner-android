@@ -16,14 +16,14 @@ import mobi.inthepocket.android.beacons.ibeaconscanner.Region;
 public class OnExitHandler
 {
     private final Handler handler;
-    private final SparseArray<Runnable> sparseArray;
+    private final SparseArray<Runnable> runnableSparseArray;
     private final long exitTimeoutInMillis;
     private final ExitCallback exitCallback;
 
     public OnExitHandler(@NonNull final ExitCallback exitCallback, final long exitTimeoutInMillis)
     {
         this.handler = new Handler();
-        this.sparseArray = new SparseArray<>();
+        this.runnableSparseArray = new SparseArray<>();
         this.exitCallback = exitCallback;
         this.exitTimeoutInMillis = exitTimeoutInMillis;
     }
@@ -33,14 +33,15 @@ public class OnExitHandler
      * when it has not been entered for {@link #exitTimeoutInMillis}.
      * @param region
      */
-    public synchronized void enterRegion(final Region region)
+    public synchronized void enterRegion(@NonNull final Region region)
     {
+        // using the {@link Region#hashCode} could collide but the chances of this happening are relatively low
         final int id = region.hashCode();
 
-        if (this.sparseArray.get(id) != null)
+        if (this.runnableSparseArray.get(id) != null)
         {
             // runnable already exists, remove it and post again
-            final Runnable runnable = this.sparseArray.get(id);
+            final Runnable runnable = this.runnableSparseArray.get(id);
             this.handler.removeCallbacks(runnable);
             this.handler.postDelayed(runnable, this.exitTimeoutInMillis);
         }
@@ -53,11 +54,11 @@ public class OnExitHandler
                 public void run()
                 {
                     OnExitHandler.this.exitCallback.didExit(region);
-                    OnExitHandler.this.sparseArray.remove(id);
+                    OnExitHandler.this.runnableSparseArray.remove(id);
                 }
             };
 
-            this.sparseArray.append(id, runnable);
+            this.runnableSparseArray.append(id, runnable);
             this.handler.postDelayed(runnable, this.exitTimeoutInMillis);
         }
     }
