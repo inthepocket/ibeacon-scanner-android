@@ -17,9 +17,10 @@ import java.util.UUID;
 
 import mobi.inthepocket.android.beacons.ibeaconscanner.database.BeaconSeen;
 import mobi.inthepocket.android.beacons.ibeaconscanner.database.BeaconsSeenTable;
+import mobi.inthepocket.android.beacons.ibeaconscanner.handler.TimeoutHandler;
 import mobi.inthepocket.android.beacons.ibeaconscanner.providers.BeaconsSeenProvider;
 import mobi.inthepocket.android.beacons.ibeaconscanner.utils.ConversionUtils;
-import mobi.inthepocket.android.beacons.ibeaconscanner.utils.OnExitHandler;
+import mobi.inthepocket.android.beacons.ibeaconscanner.handler.OnExitHandler;
 
 import static android.content.ContentValues.TAG;
 
@@ -34,18 +35,17 @@ import static android.content.ContentValues.TAG;
  */
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-public class ScannerScanCallback extends ScanCallback implements OnExitHandler.ExitCallback
+public class ScannerScanCallback extends ScanCallback implements TimeoutHandler.TimeoutCallback<Region>
 {
     private final ContentResolver contentResolver;
     private final OnExitHandler onExitHandler;
-    private final RegionManager.Callback callback;
     private final long postDelayedInMillis;
+    private RegionManager.Callback callback;
 
-    public ScannerScanCallback(@NonNull final ContentResolver contentResolver, @NonNull final RegionManager.Callback callback, final long postDelayedInMillis)
+    public ScannerScanCallback(@NonNull final ContentResolver contentResolver, final long postDelayedInMillis)
     {
         this.contentResolver = contentResolver;
         this.onExitHandler = new OnExitHandler(this, postDelayedInMillis);
-        this.callback = callback;
         this.postDelayedInMillis = postDelayedInMillis;
 
         // remove obsolete BeaconSeen entries
@@ -53,6 +53,11 @@ public class ScannerScanCallback extends ScanCallback implements OnExitHandler.E
 
         // reschedule ongoing exits via {@link OnExitHandler}
         this.resumeExits();
+    }
+
+    public void setCallback(@NonNull final RegionManager.Callback callback)
+    {
+        this.callback = callback;
     }
 
     //region ScanCallback.onScanResult
@@ -77,9 +82,10 @@ public class ScannerScanCallback extends ScanCallback implements OnExitHandler.E
             boolean patternFound = false;
             while (startByte <= 5)
             {
-                if (((int) scanRecord[startByte + 2] & 0xff) == 0x02 && //identifies an iBeacon
+                if (((int) scanRecord[startByte + 2] & 0xff) == 0x02 && // identifies an iBeacon
                         ((int) scanRecord[startByte + 3] & 0xff) == 0x15)
-                { //Identifies correct data length
+                {
+                    // identifies correct data length
                     patternFound = true;
                     break;
                 }
@@ -137,7 +143,7 @@ public class ScannerScanCallback extends ScanCallback implements OnExitHandler.E
                     this.contentResolver.insert(uri, BeaconSeen.getContentValues(region, SystemClock.elapsedRealtime()));
 
                     // add region to our onExitHandler
-                    this.onExitHandler.enterRegion(region);
+                    this.onExitHandler.passItem(region);
                 }
             }
         }
@@ -189,7 +195,7 @@ public class ScannerScanCallback extends ScanCallback implements OnExitHandler.E
                         .setMajor(beaconSeen.getMajor())
                         .setMinor(beaconSeen.getMinor())
                         .build();
-                this.onExitHandler.enterRegion(region);
+                this.onExitHandler.passItem(region);
             }
         }
     }
@@ -203,13 +209,16 @@ public class ScannerScanCallback extends ScanCallback implements OnExitHandler.E
 
     //endregion
 
-    //region OnExitHandler.ExitCallback
+    //region TimeoutHandler.TimeoutCallback
 
     @Override
-    public void didExit(@NonNull final Region region)
+    public void timedOut(@NonNull final Region region)
     {
         // exit happened, pass to callback
-        this.callback.didExitRegion(region);
+        if (this.callback != null)
+        {
+            this.callback.didExitRegion(region);
+        }
 
         // remove entry from database
         this.contentResolver.delete(getItemUri(region), null, null);
