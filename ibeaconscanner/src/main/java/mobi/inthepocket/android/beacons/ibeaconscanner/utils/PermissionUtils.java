@@ -23,10 +23,10 @@ public final class PermissionUtils
     }
 
     /**
-     * Determine whether the provided context has been granted any location permission (ACCESS_COARSE_LOCATION or
+     * Determine whether  the location permission has been granted (ACCESS_COARSE_LOCATION or
      * ACCESS_FINE_LOCATION). Below Android M, will always return true.
      *
-     * @param context    where from you determine if a permission is granted
+     * @param context to determine with if the permission is granted
      * @return true if you have any location permission or the sdk is below Android M.
      * @throws InvalidParameterException if {@param context} is null
      */
