@@ -74,7 +74,7 @@ public final class Region implements mobi.inthepocket.android.beacons.ibeaconsca
 
         final Region that = (Region)o;
 
-        if (this.uuid != that.uuid)
+        if (!this.uuid.equals(that.uuid))
         {
             return false;
         }
@@ -109,7 +109,6 @@ public final class Region implements mobi.inthepocket.android.beacons.ibeaconsca
         }
 
         /**
-         *
          * @param uuid
          * @return
          */
@@ -121,7 +120,6 @@ public final class Region implements mobi.inthepocket.android.beacons.ibeaconsca
         }
 
         /**
-         *
          * @param uuid that will get parsed with {@link UUID#fromString(String)}
          * @return
          */
@@ -133,7 +131,8 @@ public final class Region implements mobi.inthepocket.android.beacons.ibeaconsca
         }
 
         /**
-         * Major should be an integer between 0 and {@link #MAJOR_MINOR_MAX_VALUE}.
+         * Major should be an integer between 0 and {@link #MAJOR_MINOR_MAX_VALUE}. By using 0 as
+         * major, it will trigger for any major.
          *
          * @param major
          * @return
@@ -146,7 +145,8 @@ public final class Region implements mobi.inthepocket.android.beacons.ibeaconsca
         }
 
         /**
-         * Minor should be an integer between 0 and {@link #MAJOR_MINOR_MAX_VALUE}.
+         * Minor should be an integer between 0 and {@link #MAJOR_MINOR_MAX_VALUE}. By using 0 as
+         * minor, it will trigger for any minor.
          *
          * @param minor
          * @return
@@ -176,7 +176,7 @@ public final class Region implements mobi.inthepocket.android.beacons.ibeaconsca
                 throw new InvalidParameterException("Major should be a number from 0 to " + MAJOR_MINOR_MAX_VALUE);
             }
 
-            if (this.major < 0 || this.major > MAJOR_MINOR_MAX_VALUE)
+            if (this.minor < 0 || this.minor > MAJOR_MINOR_MAX_VALUE)
             {
                 throw new InvalidParameterException("Minor should be a number from 0 to " + MAJOR_MINOR_MAX_VALUE);
             }

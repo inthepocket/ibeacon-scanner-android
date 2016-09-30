@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements RegionManager.Cal
             @Override
             public void onClick(final View view)
             {
+                MainActivity.this.nextMinor = 1;
                 MainActivity.this.regionManager.stop();
             }
         });

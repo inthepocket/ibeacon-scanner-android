@@ -73,9 +73,20 @@ public final class ConversionUtils
     public static byte[] integerToByteArray(final int value)
     {
         final byte[] result = new byte[2];
-        result[0] = Byte.parseByte(String.valueOf(value / 256), 16);
-        result[1] = Byte.parseByte(String.valueOf(value % 256), 16);
+        result[0] = (byte) (value / 256); // Byte.parseByte(String.valueOf(value / 256), 16);
+        result[1] = (byte) (value % 256); // Byte.parseByte(String.valueOf(value % 256), 16);
 
         return result;
+    }
+
+    /**
+     * Convert major and minor byte array to integer.
+     *
+     * @param byteArray that contains major and minor byte
+     * @return integer value for major and minor
+     */
+    public static int byteArrayToInteger(final byte[] byteArray)
+    {
+        return (byteArray[0] & 0xff) * 0x100 + (byteArray[1] & 0xff);
     }
 }
