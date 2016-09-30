@@ -11,5 +11,4 @@ public interface Region
     UUID getUUID();
     int getMajor();
     int getMinor();
-    String getIdentifier();
 }

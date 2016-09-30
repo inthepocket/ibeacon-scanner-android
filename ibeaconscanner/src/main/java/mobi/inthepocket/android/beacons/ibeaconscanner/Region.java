@@ -3,7 +3,6 @@ package mobi.inthepocket.android.beacons.ibeaconscanner;
 import android.annotation.TargetApi;
 import android.os.Build;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import java.security.InvalidParameterException;
 import java.util.Objects;
@@ -21,7 +20,6 @@ public final class Region implements mobi.inthepocket.android.beacons.ibeaconsca
     private UUID uuid;
     private int major;
     private int minor;
-    private String identifier;
 
     private Region()
     {
@@ -32,7 +30,6 @@ public final class Region implements mobi.inthepocket.android.beacons.ibeaconsca
         this.uuid = builder.uuid;
         this.major = builder.major;
         this.minor = builder.minor;
-        this.identifier = builder.identifier;
     }
 
     @NonNull
@@ -52,13 +49,6 @@ public final class Region implements mobi.inthepocket.android.beacons.ibeaconsca
     public int getMinor()
     {
         return this.minor;
-    }
-
-    @Override
-    @Nullable
-    public String getIdentifier()
-    {
-        return this.identifier;
     }
 
     //region Equals
@@ -164,13 +154,6 @@ public final class Region implements mobi.inthepocket.android.beacons.ibeaconsca
         public Builder setMinor(final int minor)
         {
             this.minor = minor;
-
-            return this;
-        }
-
-        public Builder setIdentifier(final String identifier)
-        {
-            this.identifier = identifier;
 
             return this;
         }
