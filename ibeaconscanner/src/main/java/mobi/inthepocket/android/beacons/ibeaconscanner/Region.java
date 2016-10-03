@@ -8,6 +8,10 @@ import java.security.InvalidParameterException;
 import java.util.Objects;
 import java.util.UUID;
 
+import mobi.inthepocket.android.beacons.ibeaconscanner.exceptions.IllegalMajorException;
+import mobi.inthepocket.android.beacons.ibeaconscanner.exceptions.IllegalMinorException;
+import mobi.inthepocket.android.beacons.ibeaconscanner.exceptions.IllegalUUIDException;
+
 /**
  * Created by eliaslecomte on 23/09/2016.
  */
@@ -72,7 +76,7 @@ public final class Region implements mobi.inthepocket.android.beacons.ibeaconsca
             return false;
         }
 
-        final Region that = (Region)o;
+        final Region that = (Region) o;
 
         if (!this.uuid.equals(that.uuid))
         {
@@ -122,8 +126,10 @@ public final class Region implements mobi.inthepocket.android.beacons.ibeaconsca
         /**
          * @param uuid that will get parsed with {@link UUID#fromString(String)}
          * @return
+         * @throws IllegalArgumentException If name does not conform to the string representation as
+         *                                  described in {@link UUID#toString}
          */
-        public Builder setUUID(@NonNull final String uuid)
+        public Builder setUUID(@NonNull final String uuid) throws IllegalArgumentException
         {
             this.uuid = UUID.fromString(uuid);
 
@@ -162,23 +168,23 @@ public final class Region implements mobi.inthepocket.android.beacons.ibeaconsca
          * If {@link #uuid}, {@link #major} and {@link #minor} are valid, build returns a new {@link Region} object.
          *
          * @return {@link Region} if the parameters are valid
-         * @throws InvalidParameterException
+         * @throws IllegalArgumentException
          */
         public Region build() throws InvalidParameterException
         {
             if (this.uuid == null)
             {
-                throw new InvalidParameterException("Id1 (uuid) is not set");
+                throw new IllegalUUIDException("Uuid is not set");
             }
 
             if (this.major < 0 || this.major > MAJOR_MINOR_MAX_VALUE)
             {
-                throw new InvalidParameterException("Major should be a number from 0 to " + MAJOR_MINOR_MAX_VALUE);
+                throw new IllegalMajorException("Major should be a number from 0 to " + MAJOR_MINOR_MAX_VALUE);
             }
 
             if (this.minor < 0 || this.minor > MAJOR_MINOR_MAX_VALUE)
             {
-                throw new InvalidParameterException("Minor should be a number from 0 to " + MAJOR_MINOR_MAX_VALUE);
+                throw new IllegalMinorException("Minor should be a number from 0 to " + MAJOR_MINOR_MAX_VALUE);
             }
 
             return new Region(this);
