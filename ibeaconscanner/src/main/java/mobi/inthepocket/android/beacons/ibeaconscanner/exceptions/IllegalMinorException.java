@@ -6,15 +6,8 @@ package mobi.inthepocket.android.beacons.ibeaconscanner.exceptions;
 
 public class IllegalMinorException extends IllegalArgumentException
 {
-    /**
-     * Constructs an {@link IllegalMinorException} with the specified
-     * detail message.  A detail message is a String that describes
-     * this particular exception.
-     *
-     * @param message the detail message.
-     */
-    public IllegalMinorException(final String message)
+    public IllegalMinorException()
     {
-        super(message);
+        super("Minor should be a number from 0 to 65535.");
     }
 }

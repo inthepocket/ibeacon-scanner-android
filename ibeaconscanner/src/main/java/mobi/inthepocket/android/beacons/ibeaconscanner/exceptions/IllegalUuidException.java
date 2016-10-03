@@ -6,15 +6,8 @@ package mobi.inthepocket.android.beacons.ibeaconscanner.exceptions;
 
 public class IllegalUUIDException extends IllegalArgumentException
 {
-    /**
-     * Constructs an {@link IllegalUUIDException} with the specified
-     * detail message.  A detail message is a String that describes
-     * this particular exception.
-     *
-     * @param message the detail message.
-     */
-    public IllegalUUIDException(final String message)
+    public IllegalUUIDException()
     {
-        super(message);
+        super("Uuid is not set");
     }
 }
