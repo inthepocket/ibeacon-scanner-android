@@ -2,6 +2,8 @@ package mobi.inthepocket.android.beacons.ibeaconscanner;
 
 import android.annotation.TargetApi;
 import android.os.Build;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 import java.security.InvalidParameterException;
@@ -17,7 +19,7 @@ import mobi.inthepocket.android.beacons.ibeaconscanner.exceptions.IllegalUUIDExc
  */
 
 @TargetApi(Build.VERSION_CODES.KITKAT)
-public final class Region implements mobi.inthepocket.android.beacons.ibeaconscanner.interfaces.Region
+public final class Region implements mobi.inthepocket.android.beacons.ibeaconscanner.interfaces.Region, Parcelable
 {
     private final static int MAJOR_MINOR_MIN_VALUE = 0;
     private final static int MAJOR_MINOR_MAX_VALUE = 65535;
@@ -96,6 +98,43 @@ public final class Region implements mobi.inthepocket.android.beacons.ibeaconsca
         }
 
         return true;
+    }
+
+    //endregion
+
+    //region Parcelable
+
+    public static final Parcelable.Creator<Region> CREATOR = new Parcelable.Creator<Region>()
+    {
+        @Override
+        public Region createFromParcel(final Parcel in)
+        {
+            return new Region.Builder()
+                    .setUUID(in.readString())
+                    .setMajor(in.readInt())
+                    .setMinor(in.readInt())
+                    .build();
+        }
+
+        @Override
+        public Region[] newArray(final int size)
+        {
+            return new Region[size];
+        }
+    };
+
+    @Override
+    public int describeContents()
+    {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(final Parcel dest, final int flags)
+    {
+        dest.writeString(this.uuid.toString());
+        dest.writeInt(this.major);
+        dest.writeInt(this.minor);
     }
 
     //endregion
