@@ -13,6 +13,7 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         buildConfigField 'long', 'BEACON_EXIT_TIME_IN_MILLIS', '20L * 1000L'
+        buildConfigField 'long', 'ADD_REGION_TIMEOUT_IN_MILLIS', '375L'
     }
 
     buildTypes {

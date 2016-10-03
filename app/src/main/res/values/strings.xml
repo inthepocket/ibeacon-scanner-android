@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">app</string>
 
-    // Main Activity
+    <!-- Main Activity -->
+    <string name="add_five_beacons">Add 5 beacons</string>
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
     <string name="log_title">Log</string>
 </resources>
