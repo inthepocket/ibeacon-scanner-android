@@ -6,15 +6,8 @@ package mobi.inthepocket.android.beacons.ibeaconscanner.exceptions;
 
 public class IllegalMajorException extends IllegalArgumentException
 {
-    /**
-     * Constructs an {@link IllegalMajorException} with the specified
-     * detail message.  A detail message is a String that describes
-     * this particular exception.
-     *
-     * @param message the detail message.
-     */
-    public IllegalMajorException(final String message)
+    public IllegalMajorException()
     {
-        super(message);
+        super("Major should be a number from 0 to 65535.");
     }
 }

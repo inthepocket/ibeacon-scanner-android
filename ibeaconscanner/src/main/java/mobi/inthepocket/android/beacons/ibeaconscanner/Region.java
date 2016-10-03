@@ -19,6 +19,7 @@ import mobi.inthepocket.android.beacons.ibeaconscanner.exceptions.IllegalUUIDExc
 @TargetApi(Build.VERSION_CODES.KITKAT)
 public final class Region implements mobi.inthepocket.android.beacons.ibeaconscanner.interfaces.Region
 {
+    private final static int MAJOR_MINOR_MIN_VALUE = 0;
     private final static int MAJOR_MINOR_MAX_VALUE = 65535;
 
     private UUID uuid;
@@ -174,17 +175,17 @@ public final class Region implements mobi.inthepocket.android.beacons.ibeaconsca
         {
             if (this.uuid == null)
             {
-                throw new IllegalUUIDException("Uuid is not set");
+                throw new IllegalUUIDException();
             }
 
-            if (this.major < 0 || this.major > MAJOR_MINOR_MAX_VALUE)
+            if (this.major < MAJOR_MINOR_MIN_VALUE || this.major > MAJOR_MINOR_MAX_VALUE)
             {
-                throw new IllegalMajorException("Major should be a number from 0 to " + MAJOR_MINOR_MAX_VALUE);
+                throw new IllegalMajorException();
             }
 
-            if (this.minor < 0 || this.minor > MAJOR_MINOR_MAX_VALUE)
+            if (this.minor < MAJOR_MINOR_MIN_VALUE || this.minor > MAJOR_MINOR_MAX_VALUE)
             {
-                throw new IllegalMinorException("Minor should be a number from 0 to " + MAJOR_MINOR_MAX_VALUE);
+                throw new IllegalMinorException();
             }
 
             return new Region(this);
