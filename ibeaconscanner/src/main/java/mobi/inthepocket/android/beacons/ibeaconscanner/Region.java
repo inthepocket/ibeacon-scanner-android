@@ -12,7 +12,7 @@ import java.util.UUID;
 
 import mobi.inthepocket.android.beacons.ibeaconscanner.exceptions.IllegalMajorException;
 import mobi.inthepocket.android.beacons.ibeaconscanner.exceptions.IllegalMinorException;
-import mobi.inthepocket.android.beacons.ibeaconscanner.exceptions.IllegalUIDException;
+import mobi.inthepocket.android.beacons.ibeaconscanner.exceptions.IllegalUUIDException;
 
 /**
  * Created by eliaslecomte on 23/09/2016.
@@ -214,7 +214,7 @@ public final class Region implements mobi.inthepocket.android.beacons.ibeaconsca
         {
             if (this.uuid == null)
             {
-                throw new IllegalUIDException();
+                throw new IllegalUUIDException();
             }
 
             if (this.major < MAJOR_MINOR_MIN_VALUE || this.major > MAJOR_MINOR_MAX_VALUE)
