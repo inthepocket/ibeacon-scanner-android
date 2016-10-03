@@ -6,6 +6,10 @@ import org.junit.Test;
 
 import java.util.UUID;
 
+import mobi.inthepocket.android.beacons.ibeaconscanner.exceptions.IllegalMajorException;
+import mobi.inthepocket.android.beacons.ibeaconscanner.exceptions.IllegalMinorException;
+import mobi.inthepocket.android.beacons.ibeaconscanner.exceptions.IllegalUUIDException;
+
 import static org.junit.Assert.assertNotNull;
 
 /**
@@ -72,6 +76,15 @@ public class RegionTest
         assertNotNull(region);
     }
 
+    @Test(expected = IllegalUUIDException.class)
+    public void testWithoutUUID()
+    {
+        final Region region = new Region.Builder()
+                .setMajor(EXAMPLE_BEACON_1_MAJOR)
+                .setMinor(EXAMPLE_BEACON_1_MINOR)
+                .build();
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void testWrongUUIDString()
     {
@@ -82,7 +95,7 @@ public class RegionTest
                 .build();
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = IllegalMajorException.class)
     public void testNegativeMajor() throws Exception
     {
         final Region region = new Region.Builder()
@@ -92,7 +105,7 @@ public class RegionTest
                 .build();
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = IllegalMinorException.class)
     public void testNegativeMinor() throws Exception
     {
         final Region region = new Region.Builder()
@@ -102,23 +115,23 @@ public class RegionTest
                 .build();
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = IllegalMajorException.class)
     public void testToHighMajor() throws Exception
     {
         final Region region = new Region.Builder()
                 .setUUID(EXAMPLE_BEACON_1_UUID)
-                .setMajor(MAJOR_MINOR_MAX_VALUE+1)
+                .setMajor(MAJOR_MINOR_MAX_VALUE + 1)
                 .setMinor(EXAMPLE_BEACON_1_MINOR)
                 .build();
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = IllegalMinorException.class)
     public void testToHighMinor() throws Exception
     {
         final Region region = new Region.Builder()
                 .setUUID(EXAMPLE_BEACON_1_UUID)
                 .setMajor(EXAMPLE_BEACON_1_MAJOR)
-                .setMinor(MAJOR_MINOR_MAX_VALUE+1)
+                .setMinor(MAJOR_MINOR_MAX_VALUE + 1)
                 .build();
     }
 
@@ -170,7 +183,7 @@ public class RegionTest
         final Region region2 = new Region.Builder()
                 .setUUID(EXAMPLE_BEACON_1_UUID)
                 .setMajor(EXAMPLE_BEACON_1_MAJOR)
-                .setMinor(EXAMPLE_BEACON_1_MINOR+1)
+                .setMinor(EXAMPLE_BEACON_1_MINOR + 1)
                 .build();
 
         Assert.assertNotSame(region1, region2);
