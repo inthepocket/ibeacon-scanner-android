@@ -17,7 +17,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.RequiresPermission;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import mobi.inthepocket.android.beacons.ibeaconscanner.handlers.AddRegionsHandler;
 import mobi.inthepocket.android.beacons.ibeaconscanner.handlers.TimeoutHandler;
@@ -40,7 +42,7 @@ public final class RegionManager implements TimeoutHandler.TimeoutCallback<Objec
 
     private final AddRegionsHandler addRegionsHandler;
     private final Object timeoutObject;
-    private final List<Region> regions;
+    private final Set<Region> regions;
 
     public static RegionManager getInstance()
     {
@@ -69,7 +71,7 @@ public final class RegionManager implements TimeoutHandler.TimeoutCallback<Objec
 
         this.addRegionsHandler = new AddRegionsHandler(this, BuildConfig.ADD_REGION_TIMEOUT_IN_MILLIS);
         this.timeoutObject = new Object();
-        this.regions = new ArrayList<>();
+        this.regions = new HashSet<>();
     }
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_ADMIN)

@@ -2,19 +2,26 @@ package mobi.inthepocket.android.beacons.ibeaconscanner;
 
 import android.annotation.TargetApi;
 import android.os.Build;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 import java.security.InvalidParameterException;
 import java.util.Objects;
 import java.util.UUID;
 
+import mobi.inthepocket.android.beacons.ibeaconscanner.exceptions.IllegalMajorException;
+import mobi.inthepocket.android.beacons.ibeaconscanner.exceptions.IllegalMinorException;
+import mobi.inthepocket.android.beacons.ibeaconscanner.exceptions.IllegalUUIDException;
+
 /**
  * Created by eliaslecomte on 23/09/2016.
  */
 
 @TargetApi(Build.VERSION_CODES.KITKAT)
-public final class Region implements mobi.inthepocket.android.beacons.ibeaconscanner.interfaces.Region
+public final class Region implements mobi.inthepocket.android.beacons.ibeaconscanner.interfaces.Region, Parcelable
 {
+    private final static int MAJOR_MINOR_MIN_VALUE = 0;
     private final static int MAJOR_MINOR_MAX_VALUE = 65535;
 
     private UUID uuid;
@@ -72,9 +79,9 @@ public final class Region implements mobi.inthepocket.android.beacons.ibeaconsca
             return false;
         }
 
-        final Region that = (Region)o;
+        final Region that = (Region) o;
 
-        if (this.uuid != that.uuid)
+        if (!this.uuid.equals(that.uuid))
         {
             return false;
         }
@@ -95,6 +102,43 @@ public final class Region implements mobi.inthepocket.android.beacons.ibeaconsca
 
     //endregion
 
+    //region Parcelable
+
+    public static final Parcelable.Creator<Region> CREATOR = new Parcelable.Creator<Region>()
+    {
+        @Override
+        public Region createFromParcel(final Parcel in)
+        {
+            return new Region.Builder()
+                    .setUUID(in.readString())
+                    .setMajor(in.readInt())
+                    .setMinor(in.readInt())
+                    .build();
+        }
+
+        @Override
+        public Region[] newArray(final int size)
+        {
+            return new Region[size];
+        }
+    };
+
+    @Override
+    public int describeContents()
+    {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(final Parcel dest, final int flags)
+    {
+        dest.writeString(this.uuid.toString());
+        dest.writeInt(this.major);
+        dest.writeInt(this.minor);
+    }
+
+    //endregion
+
     //region Builder
 
     public static class Builder
@@ -109,7 +153,6 @@ public final class Region implements mobi.inthepocket.android.beacons.ibeaconsca
         }
 
         /**
-         *
          * @param uuid
          * @return
          */
@@ -121,11 +164,12 @@ public final class Region implements mobi.inthepocket.android.beacons.ibeaconsca
         }
 
         /**
-         *
          * @param uuid that will get parsed with {@link UUID#fromString(String)}
          * @return
+         * @throws IllegalArgumentException If name does not conform to the string representation as
+         *                                  described in {@link UUID#toString}
          */
-        public Builder setUUID(@NonNull final String uuid)
+        public Builder setUUID(@NonNull final String uuid) throws IllegalArgumentException
         {
             this.uuid = UUID.fromString(uuid);
 
@@ -133,7 +177,8 @@ public final class Region implements mobi.inthepocket.android.beacons.ibeaconsca
         }
 
         /**
-         * Major should be an integer between 0 and {@link #MAJOR_MINOR_MAX_VALUE}.
+         * Major should be an integer between 0 and {@link #MAJOR_MINOR_MAX_VALUE}. By using 0 as
+         * major, it will trigger for any major.
          *
          * @param major
          * @return
@@ -146,7 +191,8 @@ public final class Region implements mobi.inthepocket.android.beacons.ibeaconsca
         }
 
         /**
-         * Minor should be an integer between 0 and {@link #MAJOR_MINOR_MAX_VALUE}.
+         * Minor should be an integer between 0 and {@link #MAJOR_MINOR_MAX_VALUE}. By using 0 as
+         * minor, it will trigger for any minor.
          *
          * @param minor
          * @return
@@ -162,23 +208,23 @@ public final class Region implements mobi.inthepocket.android.beacons.ibeaconsca
          * If {@link #uuid}, {@link #major} and {@link #minor} are valid, build returns a new {@link Region} object.
          *
          * @return {@link Region} if the parameters are valid
-         * @throws InvalidParameterException
+         * @throws IllegalArgumentException
          */
         public Region build() throws InvalidParameterException
         {
             if (this.uuid == null)
             {
-                throw new InvalidParameterException("Id1 (uuid) is not set");
+                throw new IllegalUUIDException();
             }
 
-            if (this.major < 0 || this.major > MAJOR_MINOR_MAX_VALUE)
+            if (this.major < MAJOR_MINOR_MIN_VALUE || this.major > MAJOR_MINOR_MAX_VALUE)
             {
-                throw new InvalidParameterException("Major should be a number from 0 to " + MAJOR_MINOR_MAX_VALUE);
+                throw new IllegalMajorException();
             }
 
-            if (this.major < 0 || this.major > MAJOR_MINOR_MAX_VALUE)
+            if (this.minor < MAJOR_MINOR_MIN_VALUE || this.minor > MAJOR_MINOR_MAX_VALUE)
             {
-                throw new InvalidParameterException("Minor should be a number from 0 to " + MAJOR_MINOR_MAX_VALUE);
+                throw new IllegalMinorException();
             }
 
             return new Region(this);

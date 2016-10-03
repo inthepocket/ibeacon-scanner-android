@@ -29,6 +29,8 @@ dependencies {
     compile 'io.reactivex:rxjava:1.2.0' // rxjava
     compile 'com.tbruyelle.rxpermissions:rxpermissions:0.7.0@aar' // library to handle location permission
     compile 'com.facebook.stetho:stetho:1.4.1' // stetho to easily see our database
+    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5' // leak canary to check for leaks
+    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5' // leak canary to check for leaks
 
     testCompile 'junit:junit:4.12'
 }

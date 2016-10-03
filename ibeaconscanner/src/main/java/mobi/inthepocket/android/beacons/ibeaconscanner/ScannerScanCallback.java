@@ -12,17 +12,16 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
 import mobi.inthepocket.android.beacons.ibeaconscanner.database.BeaconSeen;
 import mobi.inthepocket.android.beacons.ibeaconscanner.database.BeaconsSeenTable;
+import mobi.inthepocket.android.beacons.ibeaconscanner.handlers.OnExitHandler;
 import mobi.inthepocket.android.beacons.ibeaconscanner.handlers.TimeoutHandler;
 import mobi.inthepocket.android.beacons.ibeaconscanner.providers.BeaconsSeenProvider;
 import mobi.inthepocket.android.beacons.ibeaconscanner.utils.ConversionUtils;
-import mobi.inthepocket.android.beacons.ibeaconscanner.handlers.OnExitHandler;
-
-import static android.content.ContentValues.TAG;
 
 /**
  * Created by eliaslecomte on 28/09/2016.
@@ -37,6 +36,8 @@ import static android.content.ContentValues.TAG;
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class ScannerScanCallback extends ScanCallback implements TimeoutHandler.TimeoutCallback<Region>
 {
+    private final static String TAG = ScanCallback.class.getSimpleName();
+
     private final ContentResolver contentResolver;
     private final OnExitHandler onExitHandler;
     private final long postDelayedInMillis;
@@ -100,10 +101,12 @@ public class ScannerScanCallback extends ScanCallback implements TimeoutHandler.
                 final UUID uuid = ConversionUtils.bytesToUuid(uuidBytes);
 
                 // get the major from hex result
-                final int major = (scanRecord[startByte + 20] & 0xff) * 0x100 + (scanRecord[startByte + 21] & 0xff);
+                //final int major = (scanRecord[startByte + 20] & 0xff) * 0x100 + (scanRecord[startByte + 21] & 0xff);
+                final int major = ConversionUtils.byteArrayToInteger(Arrays.copyOfRange(scanRecord, startByte + 20, startByte + 22));
 
                 // get the minor from hex result
-                final int minor = (scanRecord[startByte + 22] & 0xff) * 0x100 + (scanRecord[startByte + 23] & 0xff);
+                //final int minor = (scanRecord[startByte + 22] & 0xff) * 0x100 + (scanRecord[startByte + 23] & 0xff);
+                final int minor = ConversionUtils.byteArrayToInteger(Arrays.copyOfRange(scanRecord, startByte + 22, startByte + 24));
 
                 final Region region = new Region.Builder()
                         .setUUID(uuid)
