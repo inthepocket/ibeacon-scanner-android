@@ -18,11 +18,11 @@
             android:orientation="horizontal">
 
             <Button
-            android:id="@+id/button_start"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:enabled="false"
-            android:text="@string/start"/>
+                android:id="@+id/button_start"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:enabled="false"
+                android:text="@string/start"/>
 
             <Button
                 android:id="@+id/button_stop"
@@ -49,8 +49,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/padding_large"
-                android:textSize="@dimen/text_title"
-                android:text="@string/log_title"/>
+                android:text="@string/log_title"
+                android:textSize="@dimen/text_title"/>
 
             <TextView
                 android:id="@+id/textview_log"

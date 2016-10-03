@@ -10,14 +10,14 @@ import android.util.SparseArray;
 public abstract class TimeoutHandler<T>
 {
     private final Handler handler;
-    private final SparseArray<Runnable> sparseArray;
+    private final SparseArray<Runnable> runnableSparseArray;
     private final long timeoutInMillis;
     private final TimeoutCallback<T> timeoutCallback;
 
     public TimeoutHandler(final TimeoutCallback<T> timeoutCallback, final long timeoutInMillis)
     {
         this.handler = new Handler();
-        this.sparseArray = new SparseArray<>();
+        this.runnableSparseArray = new SparseArray<>();
         this.timeoutInMillis = timeoutInMillis;
         this.timeoutCallback = timeoutCallback;
     }
@@ -26,10 +26,10 @@ public abstract class TimeoutHandler<T>
     {
         final int id = item.hashCode();
 
-        if (this.sparseArray.get(id) != null)
+        if (this.runnableSparseArray.get(id) != null)
         {
             // runnable already exists, remove it and post again
-            final Runnable runnable = this.sparseArray.get(id);
+            final Runnable runnable = this.runnableSparseArray.get(id);
             this.handler.removeCallbacks(runnable);
             this.handler.postDelayed(runnable, this.timeoutInMillis);
         }
@@ -42,11 +42,11 @@ public abstract class TimeoutHandler<T>
                 public void run()
                 {
                     TimeoutHandler.this.timeoutCallback.timedOut(item);
-                    TimeoutHandler.this.sparseArray.remove(id);
+                    TimeoutHandler.this.runnableSparseArray.remove(id);
                 }
             };
 
-            this.sparseArray.append(id, runnable);
+            this.runnableSparseArray.append(id, runnable);
             this.handler.postDelayed(runnable, this.timeoutInMillis);
         }
     }
