@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.tbruyelle.rxpermissions.RxPermissions;
 
@@ -61,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements RegionManager.Cal
             @Override
             public void onClick(final View view)
             {
-                MainActivity.this.regionManager.stopAllMonitoring();
+                MainActivity.this.regionManager.stop();
             }
         });
         this.buttonAddFiveMore = (Button) this.findViewById(R.id.button_add_five_more);
@@ -125,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements RegionManager.Cal
     @Override
     public void monitoringDidFail(final Error error)
     {
-
+        Toast.makeText(MainActivity.this, "Could not scan due to " + error.name(), Toast.LENGTH_LONG).show();
     }
 
     //endregion

@@ -6,5 +6,8 @@ package mobi.inthepocket.android.beacons.ibeaconscanner;
 
 public enum Error
 {
-
+    NO_BLUETOOTH_LE,
+    BLUETOOTH_OFF,
+    LOCATION_OFF,
+    NO_LOCATION_PERMISSION
 }
