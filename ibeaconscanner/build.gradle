@@ -20,6 +20,7 @@ android {
         targetSdkVersion 24
         versionCode versionCodeNr
         versionName fullVersion
+        consumerProguardFiles 'proguard-rules.pro'
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
