@@ -1,4 +1,15 @@
 apply plugin: 'com.android.library'
+apply plugin: 'maven'
+
+def envBuildNumber = System.getenv().get("BUILD_NUMBER");
+if (envBuildNumber == null) {
+    envBuildNumber = "1"
+}
+
+def fullVersion = projectVersion + "." + envBuildNumber;
+def versionCodeNr = Integer.parseInt(projectVersionCode);
+def libGroupId = libGroupId;
+def libArtifactId = libArtifactId;
 
 android {
     compileSdkVersion 24
@@ -7,8 +18,8 @@ android {
     defaultConfig {
         minSdkVersion 11
         targetSdkVersion 24
-        versionCode 1
-        versionName "1.0"
+        versionCode versionCodeNr
+        versionName fullVersion
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -28,4 +39,25 @@ dependencies {
 
     androidTestCompile 'com.android.support.test:runner:0.5'
     testCompile 'junit:junit:4.12'
+}
+
+configurations {
+    deployerJars
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            configuration = configurations.deployerJars
+            repository(url: 'https://nexus.itpservices.be/content/repositories/harald-release/') {
+                authentication(userName: "${nexus_user}", password: "${nexus_password}")
+            }
+            snapshotRepository(url: 'https://nexus.itpservices.be/content/repositories/harald-snapshot/') {
+                authentication(userName: "${nexus_user}", password: "${nexus_password}")
+            }
+            pom.version = projectVersion
+            pom.artifactId = libArtifactId
+            pom.groupId = libGroupId
+        }
+    }
 }
