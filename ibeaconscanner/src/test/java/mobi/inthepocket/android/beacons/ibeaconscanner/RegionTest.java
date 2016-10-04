@@ -8,7 +8,7 @@ import java.util.UUID;
 
 import mobi.inthepocket.android.beacons.ibeaconscanner.exceptions.IllegalMajorException;
 import mobi.inthepocket.android.beacons.ibeaconscanner.exceptions.IllegalMinorException;
-import mobi.inthepocket.android.beacons.ibeaconscanner.exceptions.IllegalUUIDException;
+import mobi.inthepocket.android.beacons.ibeaconscanner.exceptions.IllegalUUID2Exception;
 
 import static org.junit.Assert.assertNotNull;
 
@@ -76,7 +76,7 @@ public class RegionTest
         assertNotNull(region);
     }
 
-    @Test(expected = IllegalUUIDException.class)
+    @Test(expected = IllegalUUID2Exception.class)
     public void testWithoutUUID()
     {
         final Region region = new Region.Builder()
