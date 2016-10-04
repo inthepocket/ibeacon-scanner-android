@@ -15,7 +15,7 @@ dependencies {
 
 ## Setup ##
 
-It depends if you want to scan for beacons in a service or in your app how to integratie the library:
+It depends if you want to scan for beacons in a service or in your app how to integrate the library:
 
 ### Service ###
 
