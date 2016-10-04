@@ -66,13 +66,13 @@ You need to set your Callback in your Activity, Fragment or Service, by implemen
 #!java
 
 public interface Callback
-    {
-        void didEnterRegion(Region region);
+{
+    void didEnterRegion(Region region);
 
-        void didExitRegion(Region region);
+    void didExitRegion(Region region);
 
-        void monitoringDidFail(Error error);
-    }
+    void monitoringDidFail(Error error);
+}
 ```
 
 
