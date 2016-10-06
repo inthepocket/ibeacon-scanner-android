@@ -5,12 +5,12 @@ import android.bluetooth.le.ScanFilter;
 import android.os.Build;
 import android.support.annotation.NonNull;
 
-import mobi.inthepocket.android.beacons.ibeaconscanner.interfaces.Region;
+import mobi.inthepocket.android.beacons.ibeaconscanner.interfaces.BeacinInterface;
 
 /**
  * Created by eliaslecomte on 23/09/2016.
  *
- * Utils class to create {@link ScanFilter}'s for a {@link Region}.
+ * Utils class to create {@link ScanFilter}'s for a {@link BeacinInterface}.
  */
 
 public final class ScanFilterUtils
@@ -22,7 +22,7 @@ public final class ScanFilterUtils
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public static ScanFilter getScanFilter(@NonNull final Region region)
+    public static ScanFilter getScanFilter(@NonNull final BeacinInterface beacon)
     {
         final ScanFilter.Builder builder = new ScanFilter.Builder();
 
@@ -67,13 +67,13 @@ public final class ScanFilterUtils
         };
 
         // copy UUID (with no dashes) into data array
-        System.arraycopy(ConversionUtils.UuidToByteArray(region.getUUID()), 0, manufacturerData, 2, 16);
+        System.arraycopy(ConversionUtils.UuidToByteArray(beacon.getUUID()), 0, manufacturerData, 2, 16);
 
         // copy major into data array
-        System.arraycopy(ConversionUtils.integerToByteArray(region.getMajor()), 0, manufacturerData, 18, 2);
+        System.arraycopy(ConversionUtils.integerToByteArray(beacon.getMajor()), 0, manufacturerData, 18, 2);
 
         // copy minor into data array
-        System.arraycopy(ConversionUtils.integerToByteArray(region.getMinor()), 0, manufacturerData, 20, 2);
+        System.arraycopy(ConversionUtils.integerToByteArray(beacon.getMinor()), 0, manufacturerData, 20, 2);
 
         builder.setManufacturerData(
                 MANUFACTURER_ID,

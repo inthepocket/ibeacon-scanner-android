@@ -13,13 +13,14 @@ import java.util.UUID;
 import mobi.inthepocket.android.beacons.ibeaconscanner.exceptions.IllegalMajorException;
 import mobi.inthepocket.android.beacons.ibeaconscanner.exceptions.IllegalMinorException;
 import mobi.inthepocket.android.beacons.ibeaconscanner.exceptions.IllegalUUIDException;
+import mobi.inthepocket.android.beacons.ibeaconscanner.interfaces.BeacinInterface;
 
 /**
  * Created by eliaslecomte on 23/09/2016.
  */
 
 @TargetApi(Build.VERSION_CODES.KITKAT)
-public final class Region implements mobi.inthepocket.android.beacons.ibeaconscanner.interfaces.Region, Parcelable
+public final class Beacon implements BeacinInterface, Parcelable
 {
     private final static int MAJOR_MINOR_MIN_VALUE = 0;
     private final static int MAJOR_MINOR_MAX_VALUE = 65535;
@@ -28,11 +29,11 @@ public final class Region implements mobi.inthepocket.android.beacons.ibeaconsca
     private int major;
     private int minor;
 
-    private Region()
+    private Beacon()
     {
     }
 
-    private Region(final Builder builder)
+    private Beacon(final Builder builder)
     {
         this.uuid = builder.uuid;
         this.major = builder.major;
@@ -79,7 +80,7 @@ public final class Region implements mobi.inthepocket.android.beacons.ibeaconsca
             return false;
         }
 
-        final Region that = (Region) o;
+        final Beacon that = (Beacon) o;
 
         if (!this.uuid.equals(that.uuid))
         {
@@ -104,12 +105,12 @@ public final class Region implements mobi.inthepocket.android.beacons.ibeaconsca
 
     //region Parcelable
 
-    public static final Parcelable.Creator<Region> CREATOR = new Parcelable.Creator<Region>()
+    public static final Parcelable.Creator<Beacon> CREATOR = new Parcelable.Creator<Beacon>()
     {
         @Override
-        public Region createFromParcel(final Parcel in)
+        public Beacon createFromParcel(final Parcel in)
         {
-            return new Region.Builder()
+            return new Beacon.Builder()
                     .setUUID(in.readString())
                     .setMajor(in.readInt())
                     .setMinor(in.readInt())
@@ -117,9 +118,9 @@ public final class Region implements mobi.inthepocket.android.beacons.ibeaconsca
         }
 
         @Override
-        public Region[] newArray(final int size)
+        public Beacon[] newArray(final int size)
         {
-            return new Region[size];
+            return new Beacon[size];
         }
     };
 
@@ -205,12 +206,12 @@ public final class Region implements mobi.inthepocket.android.beacons.ibeaconsca
         }
 
         /**
-         * If {@link #uuid}, {@link #major} and {@link #minor} are valid, build returns a new {@link Region} object.
+         * If {@link #uuid}, {@link #major} and {@link #minor} are valid, build returns a new {@link Beacon} object.
          *
-         * @return {@link Region} if the parameters are valid
+         * @return {@link Beacon} if the parameters are valid
          * @throws IllegalArgumentException
          */
-        public Region build() throws InvalidParameterException
+        public Beacon build() throws InvalidParameterException
         {
             if (this.uuid == null)
             {
@@ -227,7 +228,7 @@ public final class Region implements mobi.inthepocket.android.beacons.ibeaconsca
                 throw new IllegalMinorException();
             }
 
-            return new Region(this);
+            return new Beacon(this);
         }
     }
 

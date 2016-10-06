@@ -22,7 +22,7 @@ It depends if you want to scan for beacons in a service or in your app how to in
 ```
 #!java
 
-public class MyService extends Service implements RegionManager.Callback
+public class MyService extends Service implements IBeaconScanner.Callback
 {
     @Override
     public void onCreate()
@@ -30,8 +30,8 @@ public class MyService extends Service implements RegionManager.Callback
         super.OnCreate();
 
         // initialize
-        RegionManager.initialize(RegionManager.newInitializer(this).build());
-        RegionManager.getInstance().setCallback(this);
+        IBeaconScanner.initialize(IBeaconScanner.newInitializer(this).build());
+        IBeaconScanner.getInstance().setCallback(this);
     }
 }
 ```
@@ -50,7 +50,7 @@ public class MyApplication extends Application
         super.onCreate();
 
         // initialize
-        RegionManager.initialize(RegionManager.newInitializer(this).build());
+        IBeaconScanner.initialize(IBeaconScanner.newInitializer(this).build());
     }
 }
 ```
@@ -67,9 +67,9 @@ You need to set your Callback in your Activity, Fragment or Service, by implemen
 
 public interface Callback
 {
-    void didEnterRegion(Region region);
+    void didEnterBeacon(Beacon beacon);
 
-    void didExitRegion(Region region);
+    void didExitBeacon(Beacon beacon);
 
     void monitoringDidFail(Error error);
 }
@@ -79,16 +79,16 @@ public interface Callback
 ```
 #!java
 
-RegionManager.getInstance().setCallback(this);
+IBeaconScanner.getInstance().setCallback(this);
 ```
 
-### Create a Region object ###
+### Create a Beacon object ###
 
 
 ```
 #!java
 
-final Region region = new Region.Builder()
+final Beacon beacon = new Beacon.Builder()
     .setUUID("84be19d4-797d-11e5-8bcf-feff819cdc9f")
     .setMajor(1)
     .setMinor(2)
@@ -102,5 +102,5 @@ Pass one or more beacons to the library to start getting enter or exit notifies:
 ```
 #!java
 
-RegionManager.getInstance().startMonitoring(region);
+IBeaconScanner.getInstance().startMonitoring(beacon);
 ```
