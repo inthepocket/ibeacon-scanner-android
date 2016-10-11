@@ -10,7 +10,6 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanSettings;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -21,6 +20,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import mobi.inthepocket.android.beacons.ibeaconscanner.database.BeaconsSeenProvider;
 import mobi.inthepocket.android.beacons.ibeaconscanner.handlers.AddBeaconsHandler;
 import mobi.inthepocket.android.beacons.ibeaconscanner.handlers.TimeoutHandler;
 import mobi.inthepocket.android.beacons.ibeaconscanner.utils.BluetoothUtils;
@@ -62,10 +62,10 @@ public final class IBeaconScanner implements TimeoutHandler.TimeoutCallback<Obje
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private IBeaconScanner(@NonNull final Initializer initializer)
     {
-        final ContentResolver contentResolver = initializer.context.getContentResolver();
+        final BeaconsSeenProvider beaconsSeenProvider = new BeaconsSeenProvider(initializer.context);
 
         this.context = initializer.context;
-        this.scannerScanCallback = new ScannerScanCallback(contentResolver, initializer.exitTimeoutInMillis);
+        this.scannerScanCallback = new ScannerScanCallback(beaconsSeenProvider, initializer.exitTimeoutInMillis);
         final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         this.bluetoothLeScanner = bluetoothAdapter.getBluetoothLeScanner();
 
@@ -219,6 +219,7 @@ public final class IBeaconScanner implements TimeoutHandler.TimeoutCallback<Obje
     {
         private final Context context;
         private long exitTimeoutInMillis;
+        private int rssi;
 
         private Initializer(@NonNull final Context context)
         {
@@ -228,6 +229,11 @@ public final class IBeaconScanner implements TimeoutHandler.TimeoutCallback<Obje
         public void setExitTimeoutInMillis(final long exitTimeoutInMillis)
         {
             this.exitTimeoutInMillis = exitTimeoutInMillis;
+        }
+
+        public void setMinimumRssi(final int rssi)
+        {
+            this.rssi = rssi;
         }
 
         public Initializer build()

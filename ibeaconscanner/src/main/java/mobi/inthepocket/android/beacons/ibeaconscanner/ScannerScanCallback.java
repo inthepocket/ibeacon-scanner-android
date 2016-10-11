@@ -3,7 +3,6 @@ package mobi.inthepocket.android.beacons.ibeaconscanner;
 import android.annotation.TargetApi;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanResult;
-import android.content.ContentResolver;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -17,10 +16,10 @@ import java.util.List;
 import java.util.UUID;
 
 import mobi.inthepocket.android.beacons.ibeaconscanner.database.BeaconSeen;
+import mobi.inthepocket.android.beacons.ibeaconscanner.database.BeaconsSeenProvider;
 import mobi.inthepocket.android.beacons.ibeaconscanner.database.BeaconsSeenTable;
 import mobi.inthepocket.android.beacons.ibeaconscanner.handlers.OnExitHandler;
 import mobi.inthepocket.android.beacons.ibeaconscanner.handlers.TimeoutHandler;
-import mobi.inthepocket.android.beacons.ibeaconscanner.providers.BeaconsSeenProvider;
 import mobi.inthepocket.android.beacons.ibeaconscanner.utils.ConversionUtils;
 
 /**
@@ -38,14 +37,14 @@ public class ScannerScanCallback extends ScanCallback implements TimeoutHandler.
 {
     private final static String TAG = ScanCallback.class.getSimpleName();
 
-    private final ContentResolver contentResolver;
+    private final mobi.inthepocket.android.beacons.ibeaconscanner.database.BeaconsSeenProvider beaconsSeenProvider;
     private final OnExitHandler onExitHandler;
     private final long postDelayedInMillis;
     private IBeaconScanner.Callback callback;
 
-    public ScannerScanCallback(@NonNull final ContentResolver contentResolver, final long postDelayedInMillis)
+    public ScannerScanCallback(@NonNull final BeaconsSeenProvider beaconsSeenProvider, final long postDelayedInMillis)
     {
-        this.contentResolver = contentResolver;
+        this.beaconsSeenProvider = beaconsSeenProvider;
         this.onExitHandler = new OnExitHandler(this, postDelayedInMillis);
         this.postDelayedInMillis = postDelayedInMillis;
 
@@ -67,7 +66,7 @@ public class ScannerScanCallback extends ScanCallback implements TimeoutHandler.
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public void onScanResult(final int callbackType, final ScanResult scanResult)
     {
-        Log.d(TAG, "Found a beacon: " + scanResult.toString());
+        Log.d(TAG, "In the range of beacon: " + scanResult.toString());
 
         super.onScanResult(callbackType, scanResult);
 
@@ -116,7 +115,7 @@ public class ScannerScanCallback extends ScanCallback implements TimeoutHandler.
 
                 // see if the beacon was not yet triggered
                 final Uri uri = getItemUri(beacon);
-                final Cursor cursor = this.contentResolver.query(uri, null, null, null, null);
+                final Cursor cursor = this.beaconsSeenProvider.query(uri);
                 if (cursor != null)
                 {
                     final List<BeaconSeen> beaconSeens = new ArrayList<>();
@@ -143,7 +142,7 @@ public class ScannerScanCallback extends ScanCallback implements TimeoutHandler.
                     }
 
                     // add the enter beacon to database
-                    this.contentResolver.insert(uri, BeaconSeen.getContentValues(beacon, SystemClock.elapsedRealtime()));
+                    this.beaconsSeenProvider.insert(uri, BeaconSeen.getContentValues(beacon, SystemClock.elapsedRealtime()));
 
                     // add beacon to our onExitHandler
                     this.onExitHandler.passItem(beacon);
@@ -160,14 +159,11 @@ public class ScannerScanCallback extends ScanCallback implements TimeoutHandler.
      * Normally there should be no {@link BeaconSeen} entries in our database, but in the case the
      * library was stopped abruptly, this removes {@link BeaconSeen} entries from the {@link BeaconsSeenTable}
      * that are in the future (what happens when you restart your device as {@link SystemClock#elapsedRealtime()}
-     * returns the time since boot.
+     * returns the time since boot) or beacons that not have been exited in time.
      */
     private void removeObsoleteBeaconSeenEntries()
     {
-        final String where = BeaconsSeenTable.COLUMN_TIMESTAMP + " > ? OR "
-                + BeaconsSeenTable.COLUMN_TIMESTAMP + " < ?";
-        final String[] selectionArgs = new String[]{String.valueOf(SystemClock.elapsedRealtime()), String.valueOf(SystemClock.elapsedRealtime() - this.postDelayedInMillis)};
-        this.contentResolver.delete(BeaconsSeenProvider.CONTENT_URI, where, selectionArgs);
+        this.beaconsSeenProvider.delete(Uri.withAppendedPath(BeaconsSeenProvider.CONTENT_URI, String.valueOf(this.postDelayedInMillis)));
     }
 
     /**
@@ -175,7 +171,7 @@ public class ScannerScanCallback extends ScanCallback implements TimeoutHandler.
      */
     private void resumeExits()
     {
-        final Cursor cursor = this.contentResolver.query(BeaconsSeenProvider.CONTENT_URI, null, null, null, null);
+        final Cursor cursor = this.beaconsSeenProvider.query(BeaconsSeenProvider.CONTENT_URI);
         if (cursor != null)
         {
             final List<BeaconSeen> beaconSeens = new ArrayList<>();
@@ -224,7 +220,7 @@ public class ScannerScanCallback extends ScanCallback implements TimeoutHandler.
         }
 
         // remove entry from database
-        this.contentResolver.delete(getItemUri(beacon), null, null);
+        this.beaconsSeenProvider.delete(getItemUri(beacon));
     }
 
     //endregion
