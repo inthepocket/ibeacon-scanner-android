@@ -104,3 +104,10 @@ Pass one or more beacons to the library to start getting enter or exit notifies:
 
 IBeaconScanner.getInstance().startMonitoring(beacon);
 ```
+
+## License
+
+ANDROID-IBEACON-SCANNER is freely distributable under the terms of the [MIT license](http://url/blob/master/LICENSE).
+
+[license-image]: http://img.shields.io/badge/license-MIT-blue.svg?style=flat
+[license-url]: LICENSE
