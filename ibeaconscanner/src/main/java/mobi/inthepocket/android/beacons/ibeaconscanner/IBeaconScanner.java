@@ -69,7 +69,7 @@ public final class IBeaconScanner implements TimeoutHandler.TimeoutCallback<Obje
         final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         this.bluetoothLeScanner = bluetoothAdapter.getBluetoothLeScanner();
 
-        this.addBeaconsHandler = new AddBeaconsHandler(this, BuildConfig.ADD_BEACON_TIMEOUT_IN_MILLIS);
+        this.addBeaconsHandler = new AddBeaconsHandler(this, initializer.addBeaconTimeoutInMillis);
         this.timeoutObject = new Object();
         this.beacons = new HashSet<>();
     }
@@ -219,21 +219,34 @@ public final class IBeaconScanner implements TimeoutHandler.TimeoutCallback<Obje
     {
         private final Context context;
         private long exitTimeoutInMillis;
-        private int rssi;
+        private long addBeaconTimeoutInMillis;
 
         private Initializer(@NonNull final Context context)
         {
             this.context = context.getApplicationContext();
         }
 
+        /**
+         * After {@param exitTimeoutInMillis}, when a beacon is not seen, the exit callback:
+         * {@link Callback#didExitBeacon(Beacon)} is called.
+         *
+         * @param exitTimeoutInMillis
+         */
         public void setExitTimeoutInMillis(final long exitTimeoutInMillis)
         {
             this.exitTimeoutInMillis = exitTimeoutInMillis;
         }
 
-        public void setMinimumRssi(final int rssi)
+        /**
+         * Everytime you start or stop monitoring a {@link Beacon}, we wait {@param lolololTimoutInMillis} before
+         * changes are applied. If you add several {@link Beacon}'s, this will evade that scans are stop-started everytime.
+         * Starting from Android N, if you start a scan more than 5 times in 30 seconds, scans are blocked.
+         *
+         * @param addBeaconTimeoutInMillis
+         */
+        public void setAddBeaconTimeoutInMillis(final long addBeaconTimeoutInMillis)
         {
-            this.rssi = rssi;
+            this.addBeaconTimeoutInMillis = addBeaconTimeoutInMillis;
         }
 
         public Initializer build()
@@ -241,6 +254,11 @@ public final class IBeaconScanner implements TimeoutHandler.TimeoutCallback<Obje
             if (this.exitTimeoutInMillis == 0)
             {
                 this.exitTimeoutInMillis = BuildConfig.BEACON_EXIT_TIME_IN_MILLIS;
+            }
+
+            if (this.addBeaconTimeoutInMillis == 0)
+            {
+                this.addBeaconTimeoutInMillis = BuildConfig.ADD_BEACON_TIMEOUT_IN_MILLIS;
             }
 
             return this;
