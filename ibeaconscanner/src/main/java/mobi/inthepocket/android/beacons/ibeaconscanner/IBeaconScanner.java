@@ -232,9 +232,11 @@ public final class IBeaconScanner implements TimeoutHandler.TimeoutCallback<Obje
          *
          * @param exitTimeoutInMillis
          */
-        public void setExitTimeoutInMillis(final long exitTimeoutInMillis)
+        public Initializer setExitTimeoutInMillis(final long exitTimeoutInMillis)
         {
             this.exitTimeoutInMillis = exitTimeoutInMillis;
+
+            return this;
         }
 
         /**
@@ -244,9 +246,11 @@ public final class IBeaconScanner implements TimeoutHandler.TimeoutCallback<Obje
          *
          * @param addBeaconTimeoutInMillis
          */
-        public void setAddBeaconTimeoutInMillis(final long addBeaconTimeoutInMillis)
+        public Initializer setAddBeaconTimeoutInMillis(final long addBeaconTimeoutInMillis)
         {
             this.addBeaconTimeoutInMillis = addBeaconTimeoutInMillis;
+
+            return this;
         }
 
         public Initializer build()
