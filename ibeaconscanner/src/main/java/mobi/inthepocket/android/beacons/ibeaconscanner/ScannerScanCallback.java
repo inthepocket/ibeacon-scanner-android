@@ -37,7 +37,7 @@ public class ScannerScanCallback extends ScanCallback implements TimeoutHandler.
 {
     private final static String TAG = ScanCallback.class.getSimpleName();
 
-    private final mobi.inthepocket.android.beacons.ibeaconscanner.database.BeaconsSeenProvider beaconsSeenProvider;
+    private final BeaconsSeenProvider beaconsSeenProvider;
     private final OnExitHandler onExitHandler;
     private final long postDelayedInMillis;
     private IBeaconScanner.Callback callback;
