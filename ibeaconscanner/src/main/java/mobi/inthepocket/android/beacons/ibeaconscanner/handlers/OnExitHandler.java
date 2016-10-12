@@ -2,7 +2,7 @@ package mobi.inthepocket.android.beacons.ibeaconscanner.handlers;
 
 import android.support.annotation.NonNull;
 
-import mobi.inthepocket.android.beacons.ibeaconscanner.Region;
+import mobi.inthepocket.android.beacons.ibeaconscanner.Beacon;
 
 /**
  * Created by eliaslecomte on 28/09/2016.
@@ -11,9 +11,9 @@ import mobi.inthepocket.android.beacons.ibeaconscanner.Region;
  * when a region has not been entered for {@link TimeoutHandler#timeoutInMillis}.
  */
 
-public class OnExitHandler extends TimeoutHandler<Region>
+public class OnExitHandler extends TimeoutHandler<Beacon>
 {
-    public OnExitHandler(@NonNull final TimeoutCallback<Region> exitCallback, final long exitTimeoutInMillis)
+    public OnExitHandler(@NonNull final TimeoutCallback<Beacon> exitCallback, final long exitTimeoutInMillis)
     {
         super(exitCallback, exitTimeoutInMillis);
     }

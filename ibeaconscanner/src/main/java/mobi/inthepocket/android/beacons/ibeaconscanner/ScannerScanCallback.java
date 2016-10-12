@@ -3,7 +3,6 @@ package mobi.inthepocket.android.beacons.ibeaconscanner;
 import android.annotation.TargetApi;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanResult;
-import android.content.ContentResolver;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -17,10 +16,10 @@ import java.util.List;
 import java.util.UUID;
 
 import mobi.inthepocket.android.beacons.ibeaconscanner.database.BeaconSeen;
+import mobi.inthepocket.android.beacons.ibeaconscanner.database.BeaconsSeenProvider;
 import mobi.inthepocket.android.beacons.ibeaconscanner.database.BeaconsSeenTable;
 import mobi.inthepocket.android.beacons.ibeaconscanner.handlers.OnExitHandler;
 import mobi.inthepocket.android.beacons.ibeaconscanner.handlers.TimeoutHandler;
-import mobi.inthepocket.android.beacons.ibeaconscanner.providers.BeaconsSeenProvider;
 import mobi.inthepocket.android.beacons.ibeaconscanner.utils.ConversionUtils;
 
 /**
@@ -28,24 +27,24 @@ import mobi.inthepocket.android.beacons.ibeaconscanner.utils.ConversionUtils;
  *
  * Class is responseable for:
  * - Reading beacon information from {@link ScanResult}'s that are triggered by the {@link android.bluetooth.le.BluetoothLeScanner}.
- * - Bookkeeping of beacon triggers so it can determine weather a beacon entered or exited a {@link Region}.
- * - Calling {@link mobi.inthepocket.android.beacons.ibeaconscanner.RegionManager.Callback#didEnterRegion(Region)} and
- *  {@link mobi.inthepocket.android.beacons.ibeaconscanner.RegionManager.Callback#didExitRegion(Region)}.
+ * - Bookkeeping of beacon triggers so it can determine weather a beacon entered or exited a {@link Beacon}.
+ * - Calling {@link IBeaconScanner.Callback#didEnterBeacon(Beacon)} and
+ *  {@link IBeaconScanner.Callback#didExitBeacon(Beacon)}.
  */
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-public class ScannerScanCallback extends ScanCallback implements TimeoutHandler.TimeoutCallback<Region>
+public class ScannerScanCallback extends ScanCallback implements TimeoutHandler.TimeoutCallback<Beacon>
 {
     private final static String TAG = ScanCallback.class.getSimpleName();
 
-    private final ContentResolver contentResolver;
+    private final BeaconsSeenProvider beaconsSeenProvider;
     private final OnExitHandler onExitHandler;
     private final long postDelayedInMillis;
-    private RegionManager.Callback callback;
+    private IBeaconScanner.Callback callback;
 
-    public ScannerScanCallback(@NonNull final ContentResolver contentResolver, final long postDelayedInMillis)
+    public ScannerScanCallback(@NonNull final BeaconsSeenProvider beaconsSeenProvider, final long postDelayedInMillis)
     {
-        this.contentResolver = contentResolver;
+        this.beaconsSeenProvider = beaconsSeenProvider;
         this.onExitHandler = new OnExitHandler(this, postDelayedInMillis);
         this.postDelayedInMillis = postDelayedInMillis;
 
@@ -56,7 +55,7 @@ public class ScannerScanCallback extends ScanCallback implements TimeoutHandler.
         this.resumeExits();
     }
 
-    public void setCallback(@NonNull final RegionManager.Callback callback)
+    public void setCallback(@NonNull final IBeaconScanner.Callback callback)
     {
         this.callback = callback;
     }
@@ -67,7 +66,7 @@ public class ScannerScanCallback extends ScanCallback implements TimeoutHandler.
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public void onScanResult(final int callbackType, final ScanResult scanResult)
     {
-        Log.d(TAG, "Found a beacon: " + scanResult.toString());
+        Log.d(TAG, "In the range of beacon: " + scanResult.toString());
 
         super.onScanResult(callbackType, scanResult);
 
@@ -108,15 +107,15 @@ public class ScannerScanCallback extends ScanCallback implements TimeoutHandler.
                 //final int minor = (scanRecord[startByte + 22] & 0xff) * 0x100 + (scanRecord[startByte + 23] & 0xff);
                 final int minor = ConversionUtils.byteArrayToInteger(Arrays.copyOfRange(scanRecord, startByte + 22, startByte + 24));
 
-                final Region region = new Region.Builder()
+                final Beacon beacon = new Beacon.Builder()
                         .setUUID(uuid)
                         .setMajor(major)
                         .setMinor(minor)
                         .build();
 
                 // see if the beacon was not yet triggered
-                final Uri uri = getItemUri(region);
-                final Cursor cursor = this.contentResolver.query(uri, null, null, null, null);
+                final Uri uri = getItemUri(beacon);
+                final Cursor cursor = this.beaconsSeenProvider.query(uri);
                 if (cursor != null)
                 {
                     final List<BeaconSeen> beaconSeens = new ArrayList<>();
@@ -135,18 +134,18 @@ public class ScannerScanCallback extends ScanCallback implements TimeoutHandler.
 
                     if (beaconSeens.size() == 0)
                     {
-                        // this beacon is not yet in our database, trigger {@link RegionManager.Callback#didEnterRegion}
+                        // this beacon is not yet in our database, trigger {@link IBeaconScanner.Callback#didEnterBeacon}
                         if (this.callback != null)
                         {
-                            this.callback.didEnterRegion(region);
+                            this.callback.didEnterBeacon(beacon);
                         }
                     }
 
-                    // add the enter region to database
-                    this.contentResolver.insert(uri, BeaconSeen.getContentValues(region, SystemClock.elapsedRealtime()));
+                    // add the enter beacon to database
+                    this.beaconsSeenProvider.insert(uri, BeaconSeen.getContentValues(beacon, SystemClock.elapsedRealtime()));
 
-                    // add region to our onExitHandler
-                    this.onExitHandler.passItem(region);
+                    // add beacon to our onExitHandler
+                    this.onExitHandler.passItem(beacon);
                 }
             }
         }
@@ -160,22 +159,19 @@ public class ScannerScanCallback extends ScanCallback implements TimeoutHandler.
      * Normally there should be no {@link BeaconSeen} entries in our database, but in the case the
      * library was stopped abruptly, this removes {@link BeaconSeen} entries from the {@link BeaconsSeenTable}
      * that are in the future (what happens when you restart your device as {@link SystemClock#elapsedRealtime()}
-     * returns the time since boot.
+     * returns the time since boot) or beacons that not have been exited in time.
      */
     private void removeObsoleteBeaconSeenEntries()
     {
-        final String where = BeaconsSeenTable.COLUMN_TIMESTAMP + " > ? OR "
-                + BeaconsSeenTable.COLUMN_TIMESTAMP + " < ?";
-        final String[] selectionArgs = new String[]{String.valueOf(SystemClock.elapsedRealtime()), String.valueOf(SystemClock.elapsedRealtime() - this.postDelayedInMillis)};
-        this.contentResolver.delete(BeaconsSeenProvider.CONTENT_URI, where, selectionArgs);
+        this.beaconsSeenProvider.delete(Uri.withAppendedPath(BeaconsSeenProvider.CONTENT_URI, String.valueOf(this.postDelayedInMillis)));
     }
 
     /**
-     * Restarts countdown timers for entered {@link Region}'s that were not yet exited.
+     * Restarts countdown timers for entered {@link Beacon}'s that were not yet exited.
      */
     private void resumeExits()
     {
-        final Cursor cursor = this.contentResolver.query(BeaconsSeenProvider.CONTENT_URI, null, null, null, null);
+        final Cursor cursor = this.beaconsSeenProvider.query(BeaconsSeenProvider.CONTENT_URI);
         if (cursor != null)
         {
             final List<BeaconSeen> beaconSeens = new ArrayList<>();
@@ -194,20 +190,20 @@ public class ScannerScanCallback extends ScanCallback implements TimeoutHandler.
 
             for (final BeaconSeen beaconSeen : beaconSeens)
             {
-                final Region region = new Region.Builder().setUUID(beaconSeen.getUuid())
+                final Beacon beacon = new Beacon.Builder().setUUID(beaconSeen.getUuid())
                         .setMajor(beaconSeen.getMajor())
                         .setMinor(beaconSeen.getMinor())
                         .build();
-                this.onExitHandler.passItem(region);
+                this.onExitHandler.passItem(beacon);
             }
         }
     }
 
-    private static Uri getItemUri(@NonNull final Region region)
+    private static Uri getItemUri(@NonNull final Beacon beacon)
     {
-        return Uri.withAppendedPath(BeaconsSeenProvider.CONTENT_URI_ITEM, region.getUUID().toString()
-                + "/" + region.getMajor()
-                + "/" + region.getMinor());
+        return Uri.withAppendedPath(BeaconsSeenProvider.CONTENT_URI_ITEM, beacon.getUUID().toString()
+                + "/" + beacon.getMajor()
+                + "/" + beacon.getMinor());
     }
 
     //endregion
@@ -215,16 +211,16 @@ public class ScannerScanCallback extends ScanCallback implements TimeoutHandler.
     //region TimeoutHandler.TimeoutCallback
 
     @Override
-    public void timedOut(@NonNull final Region region)
+    public void timedOut(@NonNull final Beacon beacon)
     {
         // exit happened, pass to callback
         if (this.callback != null)
         {
-            this.callback.didExitRegion(region);
+            this.callback.didExitBeacon(beacon);
         }
 
         // remove entry from database
-        this.contentResolver.delete(getItemUri(region), null, null);
+        this.beaconsSeenProvider.delete(getItemUri(beacon));
     }
 
     //endregion

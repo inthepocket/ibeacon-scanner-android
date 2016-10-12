@@ -11,11 +11,11 @@ import android.widget.Toast;
 import com.tbruyelle.rxpermissions.RxPermissions;
 
 import mobi.inthepocket.android.beacons.app.rxjava.RxObserver;
+import mobi.inthepocket.android.beacons.ibeaconscanner.Beacon;
 import mobi.inthepocket.android.beacons.ibeaconscanner.Error;
-import mobi.inthepocket.android.beacons.ibeaconscanner.Region;
-import mobi.inthepocket.android.beacons.ibeaconscanner.RegionManager;
+import mobi.inthepocket.android.beacons.ibeaconscanner.IBeaconScanner;
 
-public class MainActivity extends AppCompatActivity implements RegionManager.Callback
+public class MainActivity extends AppCompatActivity implements IBeaconScanner.Callback
 {
     private final static String TAG = MainActivity.class.getSimpleName();
     private final static String EXAMPLE_BEACON_1_UUID = "84be19d4-797d-11e5-8bcf-feff819cdc9f";
@@ -30,7 +30,6 @@ public class MainActivity extends AppCompatActivity implements RegionManager.Cal
     private Button buttonStartScanning;
     private Button buttonStopScanning;
 
-    private RegionManager regionManager;
     private int nextMinor = 1;
 
     @Override
@@ -39,8 +38,7 @@ public class MainActivity extends AppCompatActivity implements RegionManager.Cal
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.activity_main);
 
-        this.regionManager = RegionManager.getInstance();
-        this.regionManager.setCallback(this);
+        IBeaconScanner.getInstance().setCallback(this);
 
         this.textViewLog = (TextView) this.findViewById(R.id.textview_log);
         this.buttonStartScanning = (Button) this.findViewById(R.id.button_start);
@@ -49,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements RegionManager.Cal
             @Override
             public void onClick(final View view)
             {
-                MainActivity.this.regionManager.startMonitoring(new Region.Builder()
+                IBeaconScanner.getInstance().startMonitoring(new Beacon.Builder()
                         .setUUID(EXAMPLE_BEACON_2_UUID)
                         .setMajor(EXAMPLE_BEACON_2_MAJOR)
                         .setMinor(EXAMPLE_BEACON_2_MINOR)
@@ -63,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements RegionManager.Cal
             public void onClick(final View view)
             {
                 MainActivity.this.nextMinor = 1;
-                MainActivity.this.regionManager.stop();
+                IBeaconScanner.getInstance().stop();
             }
         });
         this.buttonAddFiveMore = (Button) this.findViewById(R.id.button_add_five_more);
@@ -75,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements RegionManager.Cal
                 final int till = MainActivity.this.nextMinor + 5;
                 for (int i = MainActivity.this.nextMinor; i <= till ; i++)
                 {
-                    MainActivity.this.regionManager.startMonitoring(new Region.Builder()
+                    IBeaconScanner.getInstance().startMonitoring(new Beacon.Builder()
                             .setUUID(EXAMPLE_BEACON_1_UUID)
                             .setMajor(EXAMPLE_BEACON_1_MAJOR)
                             .setMinor(i)
@@ -111,16 +109,16 @@ public class MainActivity extends AppCompatActivity implements RegionManager.Cal
     //region Callback
 
     @Override
-    public void didEnterRegion(final Region region)
+    public void didEnterBeacon(final Beacon beacon)
     {
-        final String logMessage = String.format("Entered region with UUID %s and major %s and minor %s.", region.getUUID(), region.getMajor(), region.getMinor());
+        final String logMessage = String.format("Entered beacon with UUID %s and major %s and minor %s.", beacon.getUUID(), beacon.getMajor(), beacon.getMinor());
         this.updateLog(logMessage);
     }
 
     @Override
-    public void didExitRegion(final Region region)
+    public void didExitBeacon(final Beacon beacon)
     {
-        final String logMessage = String.format("Exited region with UUID %s and major %s and minor %s.", region.getUUID(), region.getMajor(), region.getMinor());
+        final String logMessage = String.format("Exited beacon with UUID %s and major %s and minor %s.", beacon.getUUID(), beacon.getMajor(), beacon.getMinor());
         this.updateLog(logMessage);
     }
 

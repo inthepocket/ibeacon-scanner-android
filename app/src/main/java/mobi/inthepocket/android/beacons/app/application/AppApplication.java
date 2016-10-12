@@ -5,7 +5,7 @@ import android.app.Application;
 import com.facebook.stetho.Stetho;
 import com.squareup.leakcanary.LeakCanary;
 
-import mobi.inthepocket.android.beacons.ibeaconscanner.RegionManager;
+import mobi.inthepocket.android.beacons.ibeaconscanner.IBeaconScanner;
 
 /**
  * Created by eliaslecomte on 27/09/2016.
@@ -29,6 +29,6 @@ public class AppApplication extends Application
         Stetho.initializeWithDefaults(this);
 
         // initialize In The Pockets iBeaconScanner
-        RegionManager.initialize(RegionManager.newInitializer(this).build());
+        IBeaconScanner.initialize(IBeaconScanner.newInitializer(this).build());
     }
 }

@@ -16,7 +16,7 @@ import static org.junit.Assert.assertNotNull;
  * Created by eliaslecomte on 30/09/2016.
  */
 
-public class RegionTest
+public class BeaconTest
 {
     private final static int MAJOR_MINOR_MAX_VALUE = 65535;
 
@@ -31,13 +31,13 @@ public class RegionTest
 
         while (major <= 65535)
         {
-            final Region region = new Region.Builder()
+            final Beacon beacon = new Beacon.Builder()
                     .setUUID(EXAMPLE_BEACON_1_UUID)
                     .setMajor(major)
                     .setMinor(EXAMPLE_BEACON_1_MINOR)
                     .build();
 
-            assertNotNull(region);
+            assertNotNull(beacon);
 
             major++;
         }
@@ -50,13 +50,13 @@ public class RegionTest
 
         while (minor <= 65535)
         {
-            final Region region = new Region.Builder()
+            final Beacon beacon = new Beacon.Builder()
                     .setUUID(EXAMPLE_BEACON_1_UUID)
                     .setMajor(EXAMPLE_BEACON_1_MAJOR)
                     .setMinor(minor)
                     .build();
 
-            assertNotNull(region);
+            assertNotNull(beacon);
 
             minor++;
         }
@@ -67,19 +67,19 @@ public class RegionTest
     {
         final UUID uuid = UUID.randomUUID();
 
-        final Region region = new Region.Builder()
+        final Beacon beacon = new Beacon.Builder()
                 .setUUID(uuid)
                 .setMajor(EXAMPLE_BEACON_1_MAJOR)
                 .setMinor(EXAMPLE_BEACON_1_MINOR)
                 .build();
 
-        assertNotNull(region);
+        assertNotNull(beacon);
     }
 
     @Test(expected = IllegalUUIDException.class)
     public void testWithoutUUID()
     {
-        final Region region = new Region.Builder()
+        final Beacon beacon = new Beacon.Builder()
                 .setMajor(EXAMPLE_BEACON_1_MAJOR)
                 .setMinor(EXAMPLE_BEACON_1_MINOR)
                 .build();
@@ -88,7 +88,7 @@ public class RegionTest
     @Test(expected = IllegalArgumentException.class)
     public void testWrongUUIDString()
     {
-        final Region region = new Region.Builder()
+        final Beacon beacon = new Beacon.Builder()
                 .setUUID(new String())
                 .setMajor(EXAMPLE_BEACON_1_MAJOR)
                 .setMinor(EXAMPLE_BEACON_1_MINOR)
@@ -98,7 +98,7 @@ public class RegionTest
     @Test(expected = IllegalMajorException.class)
     public void testNegativeMajor() throws Exception
     {
-        final Region region = new Region.Builder()
+        final Beacon beacon = new Beacon.Builder()
                 .setUUID(EXAMPLE_BEACON_1_UUID)
                 .setMajor(-1)
                 .setMinor(EXAMPLE_BEACON_1_MINOR)
@@ -108,7 +108,7 @@ public class RegionTest
     @Test(expected = IllegalMinorException.class)
     public void testNegativeMinor() throws Exception
     {
-        final Region region = new Region.Builder()
+        final Beacon beacon = new Beacon.Builder()
                 .setUUID(EXAMPLE_BEACON_1_UUID)
                 .setMajor(EXAMPLE_BEACON_1_MAJOR)
                 .setMinor(-1)
@@ -118,7 +118,7 @@ public class RegionTest
     @Test(expected = IllegalMajorException.class)
     public void testToHighMajor() throws Exception
     {
-        final Region region = new Region.Builder()
+        final Beacon beacon = new Beacon.Builder()
                 .setUUID(EXAMPLE_BEACON_1_UUID)
                 .setMajor(MAJOR_MINOR_MAX_VALUE + 1)
                 .setMinor(EXAMPLE_BEACON_1_MINOR)
@@ -128,7 +128,7 @@ public class RegionTest
     @Test(expected = IllegalMinorException.class)
     public void testToHighMinor() throws Exception
     {
-        final Region region = new Region.Builder()
+        final Beacon beacon = new Beacon.Builder()
                 .setUUID(EXAMPLE_BEACON_1_UUID)
                 .setMajor(EXAMPLE_BEACON_1_MAJOR)
                 .setMinor(MAJOR_MINOR_MAX_VALUE + 1)
@@ -136,56 +136,56 @@ public class RegionTest
     }
 
     @Test
-    public void testEqualRegions()
+    public void testEqualBeacons()
     {
-        final Region region1 = new Region.Builder()
+        final Beacon beacon1 = new Beacon.Builder()
                 .setUUID(EXAMPLE_BEACON_1_UUID)
                 .setMajor(EXAMPLE_BEACON_1_MAJOR)
                 .setMinor(EXAMPLE_BEACON_1_MINOR)
                 .build();
 
-        final Region region2 = new Region.Builder()
+        final Beacon beacon2 = new Beacon.Builder()
                 .setUUID(EXAMPLE_BEACON_1_UUID)
                 .setMajor(EXAMPLE_BEACON_1_MAJOR)
                 .setMinor(EXAMPLE_BEACON_1_MINOR)
                 .build();
 
-        Assert.assertEquals(region1, region2);
+        Assert.assertEquals(beacon1, beacon2);
     }
 
     @Test
-    public void testNotEqualRegionsByUUID()
+    public void testNotEqualBeaconsByUUID()
     {
-        final Region region1 = new Region.Builder()
+        final Beacon beacon1 = new Beacon.Builder()
                 .setUUID(EXAMPLE_BEACON_1_UUID)
                 .setMajor(EXAMPLE_BEACON_1_MAJOR)
                 .setMinor(EXAMPLE_BEACON_1_MINOR)
                 .build();
 
-        final Region region2 = new Region.Builder()
+        final Beacon beacon2 = new Beacon.Builder()
                 .setUUID(UUID.randomUUID())
                 .setMajor(EXAMPLE_BEACON_1_MAJOR)
                 .setMinor(EXAMPLE_BEACON_1_MINOR)
                 .build();
 
-        Assert.assertNotSame(region1, region2);
+        Assert.assertNotSame(beacon1, beacon2);
     }
 
     @Test
-    public void testNotEqualRegionsByMajor()
+    public void testNotEqualBeaconsByMajor()
     {
-        final Region region1 = new Region.Builder()
+        final Beacon beacon1 = new Beacon.Builder()
                 .setUUID(EXAMPLE_BEACON_1_UUID)
                 .setMajor(EXAMPLE_BEACON_1_MAJOR)
                 .setMinor(EXAMPLE_BEACON_1_MINOR)
                 .build();
 
-        final Region region2 = new Region.Builder()
+        final Beacon beacon2 = new Beacon.Builder()
                 .setUUID(EXAMPLE_BEACON_1_UUID)
                 .setMajor(EXAMPLE_BEACON_1_MAJOR)
                 .setMinor(EXAMPLE_BEACON_1_MINOR + 1)
                 .build();
 
-        Assert.assertNotSame(region1, region2);
+        Assert.assertNotSame(beacon1, beacon2);
     }
 }

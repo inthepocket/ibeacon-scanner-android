@@ -6,7 +6,7 @@ import java.util.UUID;
  * Created by eliaslecomte on 23/09/2016.
  */
 
-public interface Region
+public interface BeacinInterface
 {
     UUID getUUID();
     int getMajor();

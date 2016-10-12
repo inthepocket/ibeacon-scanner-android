@@ -3,7 +3,7 @@ package mobi.inthepocket.android.beacons.ibeaconscanner.database;
 import android.content.ContentValues;
 import android.database.Cursor;
 
-import mobi.inthepocket.android.beacons.ibeaconscanner.interfaces.Region;
+import mobi.inthepocket.android.beacons.ibeaconscanner.interfaces.BeacinInterface;
 
 /**
  * Created by eliaslecomte on 27/09/2016.
@@ -31,9 +31,9 @@ public class BeaconSeen
         return getContentValues(this.uuid, this.major, this.minor, this.timestamp);
     }
 
-    public static ContentValues getContentValues(final Region region, final long timestamp)
+    public static ContentValues getContentValues(final BeacinInterface beacon, final long timestamp)
     {
-        return getContentValues(region.getUUID().toString(), region.getMajor(), region.getMinor(), timestamp);
+        return getContentValues(beacon.getUUID().toString(), beacon.getMajor(), beacon.getMinor(), timestamp);
     }
 
     public static ContentValues getContentValues(final String uuid, final int major, final int minor, final long timestamp)

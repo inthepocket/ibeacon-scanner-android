@@ -10,7 +10,6 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanSettings;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -21,7 +20,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import mobi.inthepocket.android.beacons.ibeaconscanner.handlers.AddRegionsHandler;
+import mobi.inthepocket.android.beacons.ibeaconscanner.database.BeaconsSeenProvider;
+import mobi.inthepocket.android.beacons.ibeaconscanner.handlers.AddBeaconsHandler;
 import mobi.inthepocket.android.beacons.ibeaconscanner.handlers.TimeoutHandler;
 import mobi.inthepocket.android.beacons.ibeaconscanner.utils.BluetoothUtils;
 import mobi.inthepocket.android.beacons.ibeaconscanner.utils.LocationUtils;
@@ -29,26 +29,26 @@ import mobi.inthepocket.android.beacons.ibeaconscanner.utils.PermissionUtils;
 import mobi.inthepocket.android.beacons.ibeaconscanner.utils.ScanFilterUtils;
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-public final class RegionManager implements TimeoutHandler.TimeoutCallback<Object>
+public final class IBeaconScanner implements TimeoutHandler.TimeoutCallback<Object>
 {
-    private final static String TAG = RegionManager.class.getSimpleName();
+    private final static String TAG = IBeaconScanner.class.getSimpleName();
 
-    private static RegionManager instance;
+    private static IBeaconScanner instance;
 
     private final Context context;
     private BluetoothLeScanner bluetoothLeScanner;
     private final ScannerScanCallback scannerScanCallback;
     private Callback callback;
 
-    private final AddRegionsHandler addRegionsHandler;
+    private final AddBeaconsHandler addBeaconsHandler;
     private final Object timeoutObject;
-    private final Set<Region> regions;
+    private final Set<Beacon> beacons;
 
-    public static RegionManager getInstance()
+    public static IBeaconScanner getInstance()
     {
         if (instance == null)
         {
-            throw new IllegalStateException("You need to initialize RegionManager first in your Application class or in your Service onCreate");
+            throw new IllegalStateException("You need to initialize IBeaconScanner first in your Application class or in your Service onCreate");
         }
 
         return instance;
@@ -56,49 +56,49 @@ public final class RegionManager implements TimeoutHandler.TimeoutCallback<Objec
 
     public static void initialize(@NonNull final Initializer initializer)
     {
-        instance = new RegionManager(initializer);
+        instance = new IBeaconScanner(initializer);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private RegionManager(@NonNull final Initializer initializer)
+    private IBeaconScanner(@NonNull final Initializer initializer)
     {
-        final ContentResolver contentResolver = initializer.context.getContentResolver();
+        final BeaconsSeenProvider beaconsSeenProvider = new BeaconsSeenProvider(initializer.context);
 
         this.context = initializer.context;
-        this.scannerScanCallback = new ScannerScanCallback(contentResolver, initializer.exitTimeoutInMillis);
+        this.scannerScanCallback = new ScannerScanCallback(beaconsSeenProvider, initializer.exitTimeoutInMillis);
         final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         this.bluetoothLeScanner = bluetoothAdapter.getBluetoothLeScanner();
 
-        this.addRegionsHandler = new AddRegionsHandler(this, BuildConfig.ADD_REGION_TIMEOUT_IN_MILLIS);
+        this.addBeaconsHandler = new AddBeaconsHandler(this, initializer.addBeaconTimeoutInMillis);
         this.timeoutObject = new Object();
-        this.regions = new HashSet<>();
+        this.beacons = new HashSet<>();
     }
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_ADMIN)
-    public void startMonitoring(@NonNull final Region region)
+    public void startMonitoring(@NonNull final Beacon beacon)
     {
-        this.regions.add(region);
-        this.addRegionsHandler.passItem(this.timeoutObject);
+        this.beacons.add(beacon);
+        this.addBeaconsHandler.passItem(this.timeoutObject);
     }
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_ADMIN)
-    public void stopMonitoring(@NonNull final Region region)
+    public void stopMonitoring(@NonNull final Beacon beacon)
     {
-        this.regions.remove(region);
-        this.addRegionsHandler.passItem(this.timeoutObject);
+        this.beacons.remove(beacon);
+        this.addBeaconsHandler.passItem(this.timeoutObject);
     }
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_ADMIN)
     public void start()
     {
-        this.addRegionsHandler.passItem(this.timeoutObject);
+        this.addBeaconsHandler.passItem(this.timeoutObject);
     }
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_ADMIN)
     public void stop()
     {
-        this.regions.clear();
-        this.addRegionsHandler.passItem(this.timeoutObject);
+        this.beacons.clear();
+        this.addBeaconsHandler.passItem(this.timeoutObject);
     }
 
     //region Properties
@@ -109,7 +109,7 @@ public final class RegionManager implements TimeoutHandler.TimeoutCallback<Objec
     }
 
     /**
-     * Set the {@link Callback} that will get notified for {@link Region} enters, exits or if an {@link Error}
+     * Set the {@link Callback} that will get notified for {@link Beacon} enters, exits or if an {@link Error}
      * happened.
      *
      * @param callback
@@ -138,8 +138,8 @@ public final class RegionManager implements TimeoutHandler.TimeoutCallback<Objec
     @Override
     public void timedOut(final Object anObject)
     {
-        // no new regions have been added or removed for {@link BuildConfig#ADD_REGION_TIMEOUT_IN_MILLIS}, stop
-        // previous scan and start a new scan with the regions we should monitor.
+        // no new beacons have been added or removed for {@link BuildConfig#ADD_REGION_TIMEOUT_IN_MILLIS}, stop
+        // previous scan and start a new scan with the beacons we should monitor.
 
         // check if we can scan
         boolean canScan = true;
@@ -194,16 +194,16 @@ public final class RegionManager implements TimeoutHandler.TimeoutCallback<Objec
             }
 
             // stop scanning
-            this.bluetoothLeScanner.stopScan(RegionManager.this.scannerScanCallback);
+            this.bluetoothLeScanner.stopScan(IBeaconScanner.this.scannerScanCallback);
 
             // start scanning
-            if (this.regions.size() > 0)
+            if (this.beacons.size() > 0)
             {
                 final List<ScanFilter> scanFilters = new ArrayList<>();
 
-                for (final Region region : this.regions)
+                for (final Beacon beacon : this.beacons)
                 {
-                    scanFilters.add(ScanFilterUtils.getScanFilter(region));
+                    scanFilters.add(ScanFilterUtils.getScanFilter(beacon));
                 }
 
                 this.bluetoothLeScanner.startScan(scanFilters, getScanSettings(), this.scannerScanCallback);
@@ -219,15 +219,38 @@ public final class RegionManager implements TimeoutHandler.TimeoutCallback<Objec
     {
         private final Context context;
         private long exitTimeoutInMillis;
+        private long addBeaconTimeoutInMillis;
 
         private Initializer(@NonNull final Context context)
         {
             this.context = context.getApplicationContext();
         }
 
-        public void setExitTimeoutInMillis(final long exitTimeoutInMillis)
+        /**
+         * After {@param exitTimeoutInMillis}, when a beacon is not seen, the exit callback:
+         * {@link Callback#didExitBeacon(Beacon)} is called.
+         *
+         * @param exitTimeoutInMillis
+         */
+        public Initializer setExitTimeoutInMillis(final long exitTimeoutInMillis)
         {
             this.exitTimeoutInMillis = exitTimeoutInMillis;
+
+            return this;
+        }
+
+        /**
+         * Everytime you start or stop monitoring a {@link Beacon}, we wait {@param lolololTimoutInMillis} before
+         * changes are applied. If you add several {@link Beacon}'s, this will evade that scans are stop-started everytime.
+         * Starting from Android N, if you start a scan more than 5 times in 30 seconds, scans are blocked.
+         *
+         * @param addBeaconTimeoutInMillis
+         */
+        public Initializer setAddBeaconTimeoutInMillis(final long addBeaconTimeoutInMillis)
+        {
+            this.addBeaconTimeoutInMillis = addBeaconTimeoutInMillis;
+
+            return this;
         }
 
         public Initializer build()
@@ -235,6 +258,11 @@ public final class RegionManager implements TimeoutHandler.TimeoutCallback<Objec
             if (this.exitTimeoutInMillis == 0)
             {
                 this.exitTimeoutInMillis = BuildConfig.BEACON_EXIT_TIME_IN_MILLIS;
+            }
+
+            if (this.addBeaconTimeoutInMillis == 0)
+            {
+                this.addBeaconTimeoutInMillis = BuildConfig.ADD_BEACON_TIMEOUT_IN_MILLIS;
             }
 
             return this;
@@ -247,9 +275,9 @@ public final class RegionManager implements TimeoutHandler.TimeoutCallback<Objec
 
     public interface Callback
     {
-        void didEnterRegion(Region region);
+        void didEnterBeacon(Beacon beacon);
 
-        void didExitRegion(Region region);
+        void didExitBeacon(Beacon beacon);
 
         void monitoringDidFail(Error error);
     }

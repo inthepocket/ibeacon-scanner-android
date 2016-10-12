@@ -23,13 +23,13 @@ public class ConversionUtilsTest
     @Test
     public void testExampleBeacon1ScanFilter()
     {
-        final Region region = new Region.Builder()
+        final Beacon beacon = new Beacon.Builder()
                 .setUUID(EXAMPLE_BEACON_1_UUID)
                 .setMajor(EXAMPLE_BEACON_1_MAJOR)
                 .setMinor(EXAMPLE_BEACON_1_MINOR)
                 .build();
 
-        final byte[] byteArray = ConversionUtils.UuidToByteArray(region.getUUID());
+        final byte[] byteArray = ConversionUtils.UuidToByteArray(beacon.getUUID());
 
         assertNotNull(byteArray);
     }
