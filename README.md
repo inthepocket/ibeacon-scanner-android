@@ -1,6 +1,6 @@
-# ITP BEACONS SCANNER ANDROID #
+# IBEACON SCANNER ANDROID #
 
-Library to scan for iBeacons.
+Android library to scan for iBeacons.
 
 ## Download the library ##
 
