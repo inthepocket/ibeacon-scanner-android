@@ -6,8 +6,7 @@ Android library to scan for iBeacons.
 
 You can download the library via Gradle:
 
-```
-#!java
+```java
 dependencies {
     compile 'mobi.inthepocket.android:ibeaconscanner:1.0.0-SNAPSHOT'
 }
@@ -19,9 +18,7 @@ It depends if you want to scan for beacons in a service or in your app how to in
 
 ### Service ###
 
-```
-#!java
-
+```java
 public class MyService extends Service implements IBeaconScanner.Callback
 {
     @Override
@@ -40,9 +37,7 @@ public class MyService extends Service implements IBeaconScanner.Callback
 
 If you want to scan for beacons in an activity, first initialize the library in your application class:
 
-```
-#!java
-
+```java
 public class MyApplication extends Application
 {
     public void onCreate()
@@ -62,9 +57,7 @@ public class MyApplication extends Application
 You need to set your Callback in your Activity, Fragment or Service, by implementing this interface:
 
 
-```
-#!java
-
+```java
 public interface Callback
 {
     void didEnterBeacon(Beacon beacon);
@@ -76,18 +69,14 @@ public interface Callback
 ```
 
 
-```
-#!java
-
+```java
 IBeaconScanner.getInstance().setCallback(this);
 ```
 
 ### Create a Beacon object ###
 
 
-```
-#!java
-
+```java
 final Beacon beacon = new Beacon.Builder()
     .setUUID("84be19d4-797d-11e5-8bcf-feff819cdc9f")
     .setMajor(1)
@@ -99,9 +88,7 @@ final Beacon beacon = new Beacon.Builder()
 
 Pass one or more beacons to the library to start getting enter or exit notifies:
 
-```
-#!java
-
+```java
 IBeaconScanner.getInstance().startMonitoring(beacon);
 ```
 
