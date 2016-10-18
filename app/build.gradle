@@ -1,13 +1,11 @@
 apply plugin: 'com.android.application'
 
 android {
-
     compileSdkVersion 24
     buildToolsVersion "24.0.2"
 
     defaultConfig {
-
-        applicationId "inthepocket.mobi.beacons.app"
+        applicationId "mobi.inthepocket.android.beacons.app"
         minSdkVersion 11
         targetSdkVersion 24
         versionCode 1
@@ -15,13 +13,14 @@ android {
     }
 
     buildTypes {
-
         debug {
             minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
 
         release {
-            minifyEnabled false
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 }
@@ -31,6 +30,9 @@ dependencies {
     compile 'com.android.support:appcompat-v7:24.2.1'
     compile 'io.reactivex:rxjava:1.2.0' // rxjava
     compile 'com.tbruyelle.rxpermissions:rxpermissions:0.7.0@aar' // library to handle location permission
+    compile 'com.facebook.stetho:stetho:1.4.1' // stetho to easily see our database
+    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5' // leak canary to check for leaks
+    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5' // leak canary to check for leaks
 
     testCompile 'junit:junit:4.12'
 }

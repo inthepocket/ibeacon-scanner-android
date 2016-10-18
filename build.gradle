@@ -4,8 +4,13 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.1.3'
+        classpath 'com.android.tools.build:gradle:2.2.1'
     }
+}
+
+plugins {
+    id "com.jfrog.bintray" version "1.7.2"
+    id "com.github.dcendents.android-maven" version "1.5"
 }
 
 allprojects {
