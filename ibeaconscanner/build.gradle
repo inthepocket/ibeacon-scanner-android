@@ -1,15 +1,16 @@
 apply plugin: 'com.android.library'
-apply plugin: 'maven'
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'com.github.dcendents.android-maven'
 
-def envBuildNumber = System.getenv().get("BUILD_NUMBER");
-if (envBuildNumber == null) {
-    envBuildNumber = "1"
-}
-
-def fullVersion = projectVersion + "." + envBuildNumber;
-def versionCodeNr = Integer.parseInt(projectVersionCode);
+def projectVersionCodeNr = Integer.parseInt(projectVersionCode);
+def projectGit = projectGit;
+def projectUrl = projectUrl;
+def projectDescription = projectDescription
 def libGroupId = libGroupId;
 def libArtifactId = libArtifactId;
+
+group = libGroupId
+version = projectVersion
 
 android {
     compileSdkVersion 24
@@ -18,8 +19,8 @@ android {
     defaultConfig {
         minSdkVersion 11
         targetSdkVersion 24
-        versionCode versionCodeNr
-        versionName fullVersion
+        versionCode projectVersionCodeNr
+        versionName projectVersion
         consumerProguardFiles 'proguard-rules.pro'
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -49,21 +50,48 @@ configurations {
     deployerJars
 }
 
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            configuration = configurations.deployerJars
-            repository(url: 'https://nexus.itpservices.be/content/repositories/harald-release/') {
-                authentication(userName: "${nexus_user}", password: "${nexus_password}")
+install {
+    repositories.mavenInstaller {
+        pom.project {
+            name libArtifactId
+            description projectDescription
+            url projectUrl
+            inceptionYear '2016'
+
+            packaging 'aar'
+            groupId libGroupId
+            artifactId libArtifactId
+            version projectVersion
+
+            licenses {
+                license {
+                    name 'MIT'
+                    //url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    //distribution 'repo'
+                }
             }
-            snapshotRepository(url: 'https://nexus.itpservices.be/content/repositories/harald-snapshot/') {
-                authentication(userName: "${nexus_user}", password: "${nexus_password}")
-            }
-            pom.version = projectVersion
-            pom.artifactId = libArtifactId
-            pom.groupId = libGroupId
         }
     }
+}
+
+bintray() {
+    user = bintray_user
+    key = bintray_apikey
+    pkg {
+        repo = libGroupId
+        name = libArtifactId
+        userOrg = bintray_user
+        licenses = ['MIT']
+        vcsUrl = projectGit
+        version {
+            name = projectVersion
+            gpg {
+                sign = true
+                passphrase = bintray_gpg_phrase
+            }
+        }
+    }
+    configurations = ['archives']
 }
 
 task javadoc(type: Javadoc) {

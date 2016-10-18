@@ -1,36 +1,21 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     repositories {
-        maven {
-            url 'https://nexus.itpservices.be/content/groups/plugins-release'
-            credentials {
-                username = "${nexus_user}"
-                password = "${nexus_password}"
-            }
-        }
+        jcenter()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.2.1'
-        classpath 'mobi.inthepocket.abs:absplugin:1.2.0'
     }
+}
+
+plugins {
+    id "com.jfrog.bintray" version "1.7.2"
+    id "com.github.dcendents.android-maven" version "1.5"
 }
 
 allprojects {
     repositories {
-        maven {
-            url 'https://nexus.itpservices.be/content/groups/libs-release/'
-            credentials {
-                username = "${nexus_user}"
-                password = "${nexus_password}"
-            }
-        }
-        maven {
-            url 'https://nexus.itpservices.be/content/groups/libs-snapshot/'
-            credentials {
-                username = "${nexus_user}"
-                password = "${nexus_password}"
-            }
-        }
+        jcenter()
     }
 }
 
