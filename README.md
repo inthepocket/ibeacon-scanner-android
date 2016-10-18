@@ -104,7 +104,7 @@ IBeaconScanner.getInstance().startMonitoring(beacon);
 
 ## License
 
-IBEACON-SCANNER-ANDROID is freely distributable under the terms of the [MIT license](https://github.com/inthepocket/ibeacon-scanner-android/blob/master/README.md).
+IBEACON-SCANNER-ANDROID is freely distributable under the terms of the [MIT license](https://github.com/inthepocket/ibeacon-scanner-android/blob/master/LICENSE.md).
 
 [license-image]: http://img.shields.io/badge/license-MIT-blue.svg?style=flat
-[license-url]: LICENSE
+[license-url]: https://github.com/inthepocket/ibeacon-scanner-android/blob/master/LICENSE.md
