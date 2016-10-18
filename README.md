@@ -4,11 +4,19 @@ Android library to scan for iBeacons.
 
 ## Download the library ##
 
-You can download the library via Gradle:
+You can download the library via Gradle from the jCenter repository:
+
+```java
+repositories {
+    jcenter()
+}
+```
+
+By adding the dependency in your module level build.gradle:
 
 ```java
 dependencies {
-    compile 'mobi.inthepocket.android:ibeaconscanner:1.0.0-SNAPSHOT'
+    compile 'mobi.inthepocket.android:ibeaconscanner:1.0.0'
 }
 ```
 
