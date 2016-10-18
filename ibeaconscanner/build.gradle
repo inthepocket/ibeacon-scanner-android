@@ -66,8 +66,7 @@ install {
             licenses {
                 license {
                     name 'MIT'
-                    //url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                    //distribution 'repo'
+                    url 'https://github.com/inthepocket/ibeacon-scanner-android/blob/master/LICENSE.md'
                 }
             }
         }
