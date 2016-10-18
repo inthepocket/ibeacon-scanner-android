@@ -147,7 +147,6 @@ public final class Beacon implements BeacinInterface, Parcelable
         private UUID uuid;
         private int major;
         private int minor;
-        private String identifier;
 
         public Builder()
         {

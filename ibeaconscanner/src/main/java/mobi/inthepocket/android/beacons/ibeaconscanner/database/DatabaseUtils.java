@@ -10,27 +10,31 @@ import java.util.Map;
  * Created by eliaslecomte on 27/09/2016.
  */
 
-public class DatabaseUtils
+public final class DatabaseUtils
 {
+    private DatabaseUtils()
+    {
+    }
+
     /**
-     * An mapping of index-names to their index to boos the performance!
+     * A mapping of index-names to their index to boos the performance!
      */
     private final static Map<String, Integer> sIndices = new HashMap<>();
 
     /**
-     * @param c
+     * @param cursor
      * @param columnName
      * @param projectionKey (if provided, columnIndex is cached which will boost performance while looping)
      * @return string value of the columnname
      * @since 1.0.0
      */
-    public static String getString(final Cursor c, final String columnName, final String projectionKey)
+    public static String getString(final Cursor cursor, final String columnName, final String projectionKey)
     {
         try
         {
-            if (validateCursor(c, columnName))
+            if (validateCursor(cursor, columnName))
             {
-                String str = c.getString(getIndex(c, columnName, projectionKey));
+                String str = cursor.getString(getIndex(cursor, columnName, projectionKey));
 
                 if (str == null)
                 {
@@ -49,19 +53,19 @@ public class DatabaseUtils
     }
 
     /**
-     * @param c
+     * @param cursor
      * @param columnName
      * @param projectionKey (if provided, columnIndex is cached which will boost performance while looping)
      * @return int value of the columnname
      * @since 1.0.0
      */
-    public static int getInt(final Cursor c, final String columnName, final String projectionKey)
+    public static int getInt(final Cursor cursor, final String columnName, final String projectionKey)
     {
         try
         {
-            if (validateCursor(c, columnName))
+            if (validateCursor(cursor, columnName))
             {
-                return c.getInt(getIndex(c, columnName, projectionKey));
+                return cursor.getInt(getIndex(cursor, columnName, projectionKey));
             }
 
             return -1;
@@ -87,36 +91,36 @@ public class DatabaseUtils
      * Get the index for the given cursor and columnName.
      * If you provide a table-parameter, then once an index was retrieved from the cursor, it is saved in the local HashMap to boost performance.
      * Call {@link DatabaseUtils#clearIndices()} ()} to clear the list
-     * @param c
+     * @param cursor
      * @param columnName (if null, the calculated index it NOT cached for later use
      * @param projectionKey
      * @return
      */
-    private static int getIndex(final Cursor c, final String columnName, final String projectionKey)
+    private static int getIndex(final Cursor cursor, final String columnName, final String projectionKey)
     {
         if (TextUtils.isEmpty(projectionKey))
         {
-            return c.getColumnIndexOrThrow(columnName);
+            return cursor.getColumnIndexOrThrow(columnName);
         }
         final String key = new StringBuilder(projectionKey).append(columnName).toString();
         if (sIndices.containsKey(key))
         {
             return sIndices.get(key);
         }
-        final int calculatedIndex = c.getColumnIndexOrThrow(columnName);
+        final int calculatedIndex = cursor.getColumnIndexOrThrow(columnName);
         sIndices.put(key, calculatedIndex);
 
         return calculatedIndex;
     }
 
     /**
-     * @param c
+     * @param cursor
      * @param columnName
      * @return true if the cursor is not null, not closed, not after the last entry, not before the first entry.
      */
-    private static boolean validateCursor(final Cursor c, final String columnName)
+    private static boolean validateCursor(final Cursor cursor, final String columnName)
     {
-        return c != null && !c.isClosed() && !c.isAfterLast() && !c.isBeforeFirst();
+        return cursor != null && !cursor.isClosed() && !cursor.isAfterLast() && !cursor.isBeforeFirst();
     }
 
     //endregion

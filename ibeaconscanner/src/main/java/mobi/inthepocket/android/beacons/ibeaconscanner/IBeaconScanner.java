@@ -231,6 +231,7 @@ public final class IBeaconScanner implements TimeoutHandler.TimeoutCallback<Obje
          * {@link Callback#didExitBeacon(Beacon)} is called.
          *
          * @param exitTimeoutInMillis
+         * @return {@link Initializer}
          */
         public Initializer setExitTimeoutInMillis(final long exitTimeoutInMillis)
         {
@@ -240,11 +241,12 @@ public final class IBeaconScanner implements TimeoutHandler.TimeoutCallback<Obje
         }
 
         /**
-         * Everytime you start or stop monitoring a {@link Beacon}, we wait {@param lolololTimoutInMillis} before
+         * Everytime you start or stop monitoring a {@link Beacon}, we wait {@param addBeaconTimeoutInMillis} before
          * changes are applied. If you add several {@link Beacon}'s, this will evade that scans are stop-started everytime.
          * Starting from Android N, if you start a scan more than 5 times in 30 seconds, scans are blocked.
          *
          * @param addBeaconTimeoutInMillis
+         * @return {@link Initializer}
          */
         public Initializer setAddBeaconTimeoutInMillis(final long addBeaconTimeoutInMillis)
         {
@@ -253,6 +255,11 @@ public final class IBeaconScanner implements TimeoutHandler.TimeoutCallback<Obje
             return this;
         }
 
+        /**
+         * Returns the {@link Initializer} and validates if the configuration is valid and sets default values.
+         *
+         * @return {@link Initializer}
+         */
         public Initializer build()
         {
             if (this.exitTimeoutInMillis == 0)
