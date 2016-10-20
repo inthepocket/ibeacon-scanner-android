@@ -4,14 +4,17 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.1'
+        classpath 'com.android.tools.build:gradle:2.2.2'
     }
 }
 
 plugins {
-    id "com.jfrog.bintray" version "1.7.2"
-    id "com.github.dcendents.android-maven" version "1.5"
+    id "com.jfrog.bintray" version "1.7.2" // for publishing to jcenter
+    id "com.github.dcendents.android-maven" version "1.5" // for publishing to jcenter
+    id "org.sonarqube" version "2.2" // for ci with sonarqube
 }
+
+apply plugin: 'org.sonarqube'
 
 allprojects {
     repositories {
