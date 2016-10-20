@@ -1,5 +1,6 @@
 # iBeacon scanner android #
 
+[![Build Status](https://travis-ci.org/inthepocket/ibeacon-scanner-android.svg?branch=master)](https://travis-ci.org/inthepocket/ibeacon-scanner-android)
 [![MIT License][license-image]][license-url]
 
 Android library to scan for iBeacons.
@@ -8,7 +9,7 @@ Android library to scan for iBeacons.
 
 You can download the library via Gradle from the jCenter repository:
 
-```java
+```gradle
 repositories {
     jcenter()
 }
@@ -16,7 +17,7 @@ repositories {
 
 By adding the dependency in your module level build.gradle:
 
-```java
+```gradle
 dependencies {
     compile 'mobi.inthepocket.android:ibeaconscanner:1.0.0'
 }
@@ -79,14 +80,14 @@ public interface Callback
 ```
 
 
-```java
+```
 IBeaconScanner.getInstance().setCallback(this);
 ```
 
 ### Create a Beacon object ###
 
 
-```java
+```
 final Beacon beacon = new Beacon.Builder()
     .setUUID("84be19d4-797d-11e5-8bcf-feff819cdc9f")
     .setMajor(1)
@@ -98,7 +99,7 @@ final Beacon beacon = new Beacon.Builder()
 
 Pass one or more beacons to the library to start getting enter or exit notifies:
 
-```java
+```
 IBeaconScanner.getInstance().startMonitoring(beacon);
 ```
 
