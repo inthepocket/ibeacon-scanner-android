@@ -1,4 +1,4 @@
-# IBEACON SCANNER ANDROID #
+# iBeacon scanner android #
 
 [![MIT License][license-image]][license-url]
 
