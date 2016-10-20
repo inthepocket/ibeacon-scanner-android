@@ -1,6 +1,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'jacoco'
 
 def projectVersionCodeNr = Integer.parseInt(projectVersionCode);
 def projectGit = projectGit;
@@ -30,6 +31,9 @@ android {
     }
 
     buildTypes {
+        debug {
+            testCoverageEnabled true
+        }
         release {
             minifyEnabled false
         }
