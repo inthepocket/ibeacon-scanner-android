@@ -122,3 +122,12 @@ artifacts {
     archives javadocJar
     archives sourcesJar
 }
+
+sonarqube {
+    properties {
+        property "sonar.java.coveragePlugin", "jacoco"
+        property "sonar.jacoco.reportPath", "build/jacoco/testDebugUnitTest.exec"
+        property "sonar.junit.reportsPath", "build/test-results/debug/" // path to junit reports
+        property "sonar.android.lint.report", "build/outputs/lint-results-debug.xml" // path to lint reports
+    }
+}
