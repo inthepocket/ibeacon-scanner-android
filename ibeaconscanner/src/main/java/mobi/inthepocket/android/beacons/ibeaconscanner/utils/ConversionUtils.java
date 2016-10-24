@@ -12,6 +12,8 @@ import java.util.UUID;
 
 public final class ConversionUtils
 {
+    private static final char[] hexArray = "0123456789ABCDEF".toCharArray();
+
     private ConversionUtils()
     {
     }
@@ -23,7 +25,6 @@ public final class ConversionUtils
      * @param bytes Byte[] to convert
      * @return UUID
      */
-    static final char[] hexArray = "0123456789ABCDEF".toCharArray();
     public static UUID bytesToUuid(@NonNull final byte[] bytes)
     {
         final char[] hexChars = new char[bytes.length * 2];

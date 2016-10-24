@@ -18,11 +18,11 @@ import static org.junit.Assert.assertNotNull;
 
 public class BeaconTest
 {
-    private final static int MAJOR_MINOR_MAX_VALUE = 65535;
+    private static final int MAJOR_MINOR_MAX_VALUE = 65535;
 
-    private final static String EXAMPLE_BEACON_1_UUID = "84be19d4-797d-11e5-8bcf-feff819cdc9f";
-    private final static int EXAMPLE_BEACON_1_MAJOR = 1;
-    private final static int EXAMPLE_BEACON_1_MINOR = 2;
+    private static final String EXAMPLE_BEACON_1_UUID = "84be19d4-797d-11e5-8bcf-feff819cdc9f";
+    private static final int EXAMPLE_BEACON_1_MAJOR = 1;
+    private static final int EXAMPLE_BEACON_1_MINOR = 2;
 
     @Test
     public void testAllMajors()

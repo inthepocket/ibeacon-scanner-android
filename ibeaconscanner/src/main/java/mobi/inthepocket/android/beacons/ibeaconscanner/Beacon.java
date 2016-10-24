@@ -13,17 +13,17 @@ import java.util.UUID;
 import mobi.inthepocket.android.beacons.ibeaconscanner.exceptions.IllegalMajorException;
 import mobi.inthepocket.android.beacons.ibeaconscanner.exceptions.IllegalMinorException;
 import mobi.inthepocket.android.beacons.ibeaconscanner.exceptions.IllegalUUIDException;
-import mobi.inthepocket.android.beacons.ibeaconscanner.interfaces.BeacinInterface;
+import mobi.inthepocket.android.beacons.ibeaconscanner.interfaces.BeaconInterface;
 
 /**
  * Created by eliaslecomte on 23/09/2016.
  */
 
 @TargetApi(Build.VERSION_CODES.KITKAT)
-public final class Beacon implements BeacinInterface, Parcelable
+public final class Beacon implements BeaconInterface, Parcelable
 {
-    private final static int MAJOR_MINOR_MIN_VALUE = 0;
-    private final static int MAJOR_MINOR_MAX_VALUE = 65535;
+    private static final int MAJOR_MINOR_MIN_VALUE = 0;
+    private static final int MAJOR_MINOR_MAX_VALUE = 65535;
 
     private UUID uuid;
     private int major;

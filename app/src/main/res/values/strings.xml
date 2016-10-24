@@ -2,8 +2,18 @@
     <string name="app_name">app</string>
 
     <!-- Main Activity -->
-    <string name="add_five_beacons">Add 5 beacons</string>
-    <string name="start">Start</string>
+    <string name="uuid">Uuid</string>
+    <string name="major">Major</string>
+    <string name="minor">Minor</string>
+    <string name="start">Start scanning</string>
     <string name="stop">Stop</string>
     <string name="log_title">Log</string>
+    <string name="uuid_error">Uuid is not correct.</string>
+    <string name="major_error">Major is not correct. Has to be a number between 1 &#8211; 65535.</string>
+    <string name="minor_error">Major is not correct. Has to be a number between 1 &#8211; 65535.</string>
+
+    <!-- Default values for beacon input -->
+    <string name="beacon_uuid">84be19d4-797d-11e5-8bcf-feff819cdc9f</string>
+    <string name="beacon_major">1</string>
+    <string name="beacon_minor">1</string>
 </resources>

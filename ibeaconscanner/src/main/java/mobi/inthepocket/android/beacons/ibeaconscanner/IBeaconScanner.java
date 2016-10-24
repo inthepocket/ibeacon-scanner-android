@@ -31,7 +31,7 @@ import mobi.inthepocket.android.beacons.ibeaconscanner.utils.ScanFilterUtils;
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public final class IBeaconScanner implements TimeoutHandler.TimeoutCallback<Object>
 {
-    private final static String TAG = IBeaconScanner.class.getSimpleName();
+    private static final String TAG = IBeaconScanner.class.getSimpleName();
 
     private static IBeaconScanner instance;
 
@@ -197,7 +197,7 @@ public final class IBeaconScanner implements TimeoutHandler.TimeoutCallback<Obje
             this.bluetoothLeScanner.stopScan(IBeaconScanner.this.scannerScanCallback);
 
             // start scanning
-            if (this.beacons.size() > 0)
+            if (!this.beacons.isEmpty())
             {
                 final List<ScanFilter> scanFilters = new ArrayList<>();
 

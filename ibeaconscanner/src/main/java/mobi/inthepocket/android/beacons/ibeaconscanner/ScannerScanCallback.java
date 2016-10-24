@@ -35,7 +35,7 @@ import mobi.inthepocket.android.beacons.ibeaconscanner.utils.ConversionUtils;
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class ScannerScanCallback extends ScanCallback implements TimeoutHandler.TimeoutCallback<Beacon>
 {
-    private final static String TAG = ScanCallback.class.getSimpleName();
+    private static final String TAG = ScanCallback.class.getSimpleName();
 
     private final BeaconsSeenProvider beaconsSeenProvider;
     private final OnExitHandler onExitHandler;
@@ -74,9 +74,6 @@ public class ScannerScanCallback extends ScanCallback implements TimeoutHandler.
         if (scanResult.getScanRecord() != null)
         {
             final byte[] scanRecord = scanResult.getScanRecord().getBytes();
-
-            // get Rssi of device
-            final int rssi = scanResult.getRssi();
 
             int startByte = 2;
             boolean patternFound = false;
@@ -132,7 +129,7 @@ public class ScannerScanCallback extends ScanCallback implements TimeoutHandler.
 
                     cursor.close();
 
-                    if (beaconSeens.size() == 0)
+                    if (beaconSeens.isEmpty())
                     {
                         // this beacon is not yet in our database, trigger {@link IBeaconScanner.Callback#didEnterBeacon}
                         if (this.callback != null)

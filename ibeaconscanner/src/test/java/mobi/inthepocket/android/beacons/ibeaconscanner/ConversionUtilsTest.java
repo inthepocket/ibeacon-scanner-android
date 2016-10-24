@@ -4,8 +4,11 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
+import java.util.UUID;
+
 import mobi.inthepocket.android.beacons.ibeaconscanner.utils.ConversionUtils;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 /**
@@ -14,11 +17,22 @@ import static org.junit.Assert.assertNotNull;
 
 public class ConversionUtilsTest
 {
-    private final static int MAJOR_MINOR_MAX_VALUE = 65535;
+    private static final int MAJOR_MINOR_MAX_VALUE = 65535;
 
-    private final static String EXAMPLE_BEACON_1_UUID = "84be19d4-797d-11e5-8bcf-feff819cdc9f";
-    private final static int EXAMPLE_BEACON_1_MAJOR = 1;
-    private final static int EXAMPLE_BEACON_1_MINOR = 2;
+    private static final String EXAMPLE_BEACON_1_UUID = "84be19d4-797d-11e5-8bcf-feff819cdc9f";
+    private static final int EXAMPLE_BEACON_1_MAJOR = 1;
+    private static final int EXAMPLE_BEACON_1_MINOR = 2;
+
+    @Test
+    public void testBytesToUuid()
+    {
+        final byte[] byteArray = { (byte) -124, (byte) -66, (byte) 25, (byte) -44, (byte) 121, (byte) 125, (byte) 17, (byte) -27, (byte) -117, (byte) -49, (byte) -2, (byte) -1, (byte) -127, (byte) -100, (byte) -36, (byte) -97};
+
+        final UUID uuid = ConversionUtils.bytesToUuid(byteArray);
+
+        assertNotNull(uuid);
+        assertEquals(uuid, UUID.fromString(EXAMPLE_BEACON_1_UUID));
+    }
 
     @Test
     public void testExampleBeacon1ScanFilter()
@@ -37,8 +51,8 @@ public class ConversionUtilsTest
     @Test
     public void testCrashingMajorMinors()
     {
-        final int i = Integer.parseInt("80", 16);
         final byte[] bytes = ConversionUtils.integerToByteArray(80);
+
         assertNotNull(bytes);
     }
 

@@ -19,7 +19,7 @@ public final class DatabaseUtils
     /**
      * A mapping of index-names to their index to boos the performance!
      */
-    private final static Map<String, Integer> sIndices = new HashMap<>();
+    private static final Map<String, Integer> sIndices = new HashMap<>();
 
     /**
      * @param cursor
