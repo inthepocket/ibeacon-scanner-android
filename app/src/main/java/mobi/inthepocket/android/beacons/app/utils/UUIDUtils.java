@@ -15,7 +15,7 @@ public final class UUIDUtils
     /**
      *
      * @param uuid
-     * @return true if {@param uuid} matches the UUID pattern
+     * @return true if {@code uuid} matches the UUID pattern
      */
     public static boolean isValidUUID(final String uuid)
     {

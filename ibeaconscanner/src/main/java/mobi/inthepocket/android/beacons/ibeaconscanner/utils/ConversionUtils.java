@@ -74,8 +74,8 @@ public final class ConversionUtils
     public static byte[] integerToByteArray(final int value)
     {
         final byte[] result = new byte[2];
-        result[0] = (byte) (value / 256); // Byte.parseByte(String.valueOf(value / 256), 16);
-        result[1] = (byte) (value % 256); // Byte.parseByte(String.valueOf(value % 256), 16);
+        result[0] = (byte) (value / 256);
+        result[1] = (byte) (value % 256);
 
         return result;
     }

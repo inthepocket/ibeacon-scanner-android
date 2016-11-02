@@ -88,7 +88,7 @@ IBeaconScanner.getInstance().setCallback(this);
 
 
 ```
-final Beacon beacon = new Beacon.Builder()
+final Beacon beacon = Beacon.newBuilder()
     .setUUID("84be19d4-797d-11e5-8bcf-feff819cdc9f")
     .setMajor(1)
     .setMinor(2)

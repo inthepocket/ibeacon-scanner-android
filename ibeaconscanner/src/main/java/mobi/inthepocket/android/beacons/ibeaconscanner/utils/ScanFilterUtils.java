@@ -10,7 +10,7 @@ import mobi.inthepocket.android.beacons.ibeaconscanner.interfaces.BeaconInterfac
 /**
  * Created by eliaslecomte on 23/09/2016.
  *
- * Utils class to create {@link ScanFilter}'s for a {@link BeaconInterface}.
+ * Utils class to create {@link ScanFilter}s for a {@link BeaconInterface}.
  */
 
 public final class ScanFilterUtils

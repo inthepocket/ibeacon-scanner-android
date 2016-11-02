@@ -37,7 +37,7 @@ public class ConversionUtilsTest
     @Test
     public void testExampleBeacon1ScanFilter()
     {
-        final Beacon beacon = new Beacon.Builder()
+        final Beacon beacon = Beacon.newBuilder()
                 .setUUID(EXAMPLE_BEACON_1_UUID)
                 .setMajor(EXAMPLE_BEACON_1_MAJOR)
                 .setMinor(EXAMPLE_BEACON_1_MINOR)

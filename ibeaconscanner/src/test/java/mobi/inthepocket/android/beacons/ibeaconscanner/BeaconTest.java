@@ -31,7 +31,7 @@ public class BeaconTest
 
         while (major <= 65535)
         {
-            final Beacon beacon = new Beacon.Builder()
+            final Beacon beacon = Beacon.newBuilder()
                     .setUUID(EXAMPLE_BEACON_1_UUID)
                     .setMajor(major)
                     .setMinor(EXAMPLE_BEACON_1_MINOR)
@@ -50,7 +50,7 @@ public class BeaconTest
 
         while (minor <= 65535)
         {
-            final Beacon beacon = new Beacon.Builder()
+            final Beacon beacon = Beacon.newBuilder()
                     .setUUID(EXAMPLE_BEACON_1_UUID)
                     .setMajor(EXAMPLE_BEACON_1_MAJOR)
                     .setMinor(minor)
@@ -67,7 +67,7 @@ public class BeaconTest
     {
         final UUID uuid = UUID.randomUUID();
 
-        final Beacon beacon = new Beacon.Builder()
+        final Beacon beacon = Beacon.newBuilder()
                 .setUUID(uuid)
                 .setMajor(EXAMPLE_BEACON_1_MAJOR)
                 .setMinor(EXAMPLE_BEACON_1_MINOR)
@@ -79,7 +79,7 @@ public class BeaconTest
     @Test(expected = IllegalUUIDException.class)
     public void testWithoutUUID()
     {
-        final Beacon beacon = new Beacon.Builder()
+        final Beacon beacon = Beacon.newBuilder()
                 .setMajor(EXAMPLE_BEACON_1_MAJOR)
                 .setMinor(EXAMPLE_BEACON_1_MINOR)
                 .build();
@@ -88,8 +88,8 @@ public class BeaconTest
     @Test(expected = IllegalArgumentException.class)
     public void testWrongUUIDString()
     {
-        final Beacon beacon = new Beacon.Builder()
-                .setUUID(new String())
+        final Beacon beacon = Beacon.newBuilder()
+                .setUUID("")
                 .setMajor(EXAMPLE_BEACON_1_MAJOR)
                 .setMinor(EXAMPLE_BEACON_1_MINOR)
                 .build();
@@ -98,7 +98,7 @@ public class BeaconTest
     @Test(expected = IllegalMajorException.class)
     public void testNegativeMajor() throws Exception
     {
-        final Beacon beacon = new Beacon.Builder()
+        final Beacon beacon = Beacon.newBuilder()
                 .setUUID(EXAMPLE_BEACON_1_UUID)
                 .setMajor(-1)
                 .setMinor(EXAMPLE_BEACON_1_MINOR)
@@ -108,7 +108,7 @@ public class BeaconTest
     @Test(expected = IllegalMinorException.class)
     public void testNegativeMinor() throws Exception
     {
-        final Beacon beacon = new Beacon.Builder()
+        final Beacon beacon = Beacon.newBuilder()
                 .setUUID(EXAMPLE_BEACON_1_UUID)
                 .setMajor(EXAMPLE_BEACON_1_MAJOR)
                 .setMinor(-1)
@@ -118,7 +118,7 @@ public class BeaconTest
     @Test(expected = IllegalMajorException.class)
     public void testToHighMajor() throws Exception
     {
-        final Beacon beacon = new Beacon.Builder()
+        final Beacon beacon = Beacon.newBuilder()
                 .setUUID(EXAMPLE_BEACON_1_UUID)
                 .setMajor(MAJOR_MINOR_MAX_VALUE + 1)
                 .setMinor(EXAMPLE_BEACON_1_MINOR)
@@ -128,7 +128,7 @@ public class BeaconTest
     @Test(expected = IllegalMinorException.class)
     public void testToHighMinor() throws Exception
     {
-        final Beacon beacon = new Beacon.Builder()
+        final Beacon beacon = Beacon.newBuilder()
                 .setUUID(EXAMPLE_BEACON_1_UUID)
                 .setMajor(EXAMPLE_BEACON_1_MAJOR)
                 .setMinor(MAJOR_MINOR_MAX_VALUE + 1)
@@ -138,13 +138,13 @@ public class BeaconTest
     @Test
     public void testEqualBeacons()
     {
-        final Beacon beacon1 = new Beacon.Builder()
+        final Beacon beacon1 = Beacon.newBuilder()
                 .setUUID(EXAMPLE_BEACON_1_UUID)
                 .setMajor(EXAMPLE_BEACON_1_MAJOR)
                 .setMinor(EXAMPLE_BEACON_1_MINOR)
                 .build();
 
-        final Beacon beacon2 = new Beacon.Builder()
+        final Beacon beacon2 = Beacon.newBuilder()
                 .setUUID(EXAMPLE_BEACON_1_UUID)
                 .setMajor(EXAMPLE_BEACON_1_MAJOR)
                 .setMinor(EXAMPLE_BEACON_1_MINOR)
@@ -156,13 +156,13 @@ public class BeaconTest
     @Test
     public void testNotEqualBeaconsByUUID()
     {
-        final Beacon beacon1 = new Beacon.Builder()
+        final Beacon beacon1 = Beacon.newBuilder()
                 .setUUID(EXAMPLE_BEACON_1_UUID)
                 .setMajor(EXAMPLE_BEACON_1_MAJOR)
                 .setMinor(EXAMPLE_BEACON_1_MINOR)
                 .build();
 
-        final Beacon beacon2 = new Beacon.Builder()
+        final Beacon beacon2 = Beacon.newBuilder()
                 .setUUID(UUID.randomUUID())
                 .setMajor(EXAMPLE_BEACON_1_MAJOR)
                 .setMinor(EXAMPLE_BEACON_1_MINOR)
@@ -174,13 +174,13 @@ public class BeaconTest
     @Test
     public void testNotEqualBeaconsByMajor()
     {
-        final Beacon beacon1 = new Beacon.Builder()
+        final Beacon beacon1 = Beacon.newBuilder()
                 .setUUID(EXAMPLE_BEACON_1_UUID)
                 .setMajor(EXAMPLE_BEACON_1_MAJOR)
                 .setMinor(EXAMPLE_BEACON_1_MINOR)
                 .build();
 
-        final Beacon beacon2 = new Beacon.Builder()
+        final Beacon beacon2 = Beacon.newBuilder()
                 .setUUID(EXAMPLE_BEACON_1_UUID)
                 .setMajor(EXAMPLE_BEACON_1_MAJOR)
                 .setMinor(EXAMPLE_BEACON_1_MINOR + 1)

@@ -32,7 +32,7 @@ public final class DatabaseUtils
     {
         try
         {
-            if (validateCursor(cursor, columnName))
+            if (validateCursor(cursor))
             {
                 String str = cursor.getString(getIndex(cursor, columnName, projectionKey));
 
@@ -63,7 +63,7 @@ public final class DatabaseUtils
     {
         try
         {
-            if (validateCursor(cursor, columnName))
+            if (validateCursor(cursor))
             {
                 return cursor.getInt(getIndex(cursor, columnName, projectionKey));
             }
@@ -115,10 +115,9 @@ public final class DatabaseUtils
 
     /**
      * @param cursor
-     * @param columnName
      * @return true if the cursor is not null, not closed, not after the last entry, not before the first entry.
      */
-    private static boolean validateCursor(final Cursor cursor, final String columnName)
+    private static boolean validateCursor(final Cursor cursor)
     {
         return cursor != null && !cursor.isClosed() && !cursor.isAfterLast() && !cursor.isBeforeFirst();
     }

@@ -110,7 +110,7 @@ public final class Beacon implements BeaconInterface, Parcelable
         @Override
         public Beacon createFromParcel(final Parcel in)
         {
-            return new Beacon.Builder()
+            return Beacon.newBuilder()
                     .setUUID(in.readString())
                     .setMajor(in.readInt())
                     .setMinor(in.readInt())
@@ -140,15 +140,30 @@ public final class Beacon implements BeaconInterface, Parcelable
 
     //endregion
 
+    //region Properties
+
+    /**
+     * @return a new {@link Builder} to create a {@link Beacon}
+     */
+    public static Builder newBuilder()
+    {
+        return new Builder();
+    }
+
+    //endregion
+
     //region Builder
 
-    public static class Builder
+    /**
+     * A Builder class to create a {@link Beacon} and validate the {@link #uuid}, {@link #major} and {@link #minor}.
+     */
+    public static final class Builder
     {
         private UUID uuid;
         private int major;
         private int minor;
 
-        public Builder()
+        private Builder()
         {
         }
 

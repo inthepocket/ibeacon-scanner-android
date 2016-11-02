@@ -1,7 +1,7 @@
 package mobi.inthepocket.android.beacons.ibeaconscanner;
 
 /**
- * Created by eliaslecomte on 23/09/2016.
+ *  Initialization and configuration entry point for iBeacon Scanner Android.
  */
 
 import android.Manifest;
@@ -31,8 +31,6 @@ import mobi.inthepocket.android.beacons.ibeaconscanner.utils.ScanFilterUtils;
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public final class IBeaconScanner implements TimeoutHandler.TimeoutCallback<Object>
 {
-    private static final String TAG = IBeaconScanner.class.getSimpleName();
-
     private static IBeaconScanner instance;
 
     private final Context context;
@@ -43,21 +41,6 @@ public final class IBeaconScanner implements TimeoutHandler.TimeoutCallback<Obje
     private final AddBeaconsHandler addBeaconsHandler;
     private final Object timeoutObject;
     private final Set<Beacon> beacons;
-
-    public static IBeaconScanner getInstance()
-    {
-        if (instance == null)
-        {
-            throw new IllegalStateException("You need to initialize IBeaconScanner first in your Application class or in your Service onCreate");
-        }
-
-        return instance;
-    }
-
-    public static void initialize(@NonNull final Initializer initializer)
-    {
-        instance = new IBeaconScanner(initializer);
-    }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private IBeaconScanner(@NonNull final Initializer initializer)
@@ -74,6 +57,31 @@ public final class IBeaconScanner implements TimeoutHandler.TimeoutCallback<Obje
         this.beacons = new HashSet<>();
     }
 
+    public static IBeaconScanner getInstance()
+    {
+        if (instance == null)
+        {
+            throw new IllegalStateException("You need to initialize IBeaconScanner first in your Application class or in your Service onCreate");
+        }
+
+        return instance;
+    }
+
+    /**
+     * Initialize {@link IBeaconScanner} with {@code initializer}.
+     *
+     * @param initializer You pass a {@link Context} object and can modify settings like the exit timeout ({@link Initializer#setExitTimeoutInMillis(long)})
+     */
+    public static void initialize(@NonNull final Initializer initializer)
+    {
+        instance = new IBeaconScanner(initializer);
+    }
+
+    /**
+     * Start monitoring {@code beacon} and all previously added {@link Beacon}s.
+     *
+     * @param beacon to start monitoring
+     */
     @RequiresPermission(Manifest.permission.BLUETOOTH_ADMIN)
     public void startMonitoring(@NonNull final Beacon beacon)
     {
@@ -81,6 +89,12 @@ public final class IBeaconScanner implements TimeoutHandler.TimeoutCallback<Obje
         this.addBeaconsHandler.passItem(this.timeoutObject);
     }
 
+    /**
+     * Stop monitoring for {@code beacon}. Keep monitoring for other {@link Beacon}s that were added with
+     * {@link #startMonitoring(Beacon)}.
+     *
+     * @param beacon to stop monitoring
+     */
     @RequiresPermission(Manifest.permission.BLUETOOTH_ADMIN)
     public void stopMonitoring(@NonNull final Beacon beacon)
     {
@@ -88,12 +102,18 @@ public final class IBeaconScanner implements TimeoutHandler.TimeoutCallback<Obje
         this.addBeaconsHandler.passItem(this.timeoutObject);
     }
 
+    /**
+     * Starts monitoring for previously added {@link Beacon}s.
+     */
     @RequiresPermission(Manifest.permission.BLUETOOTH_ADMIN)
     public void start()
     {
         this.addBeaconsHandler.passItem(this.timeoutObject);
     }
 
+    /**
+     * Stops monitoring and removes all monitored {@link Beacon}s.
+     */
     @RequiresPermission(Manifest.permission.BLUETOOTH_ADMIN)
     public void stop()
     {
@@ -103,6 +123,10 @@ public final class IBeaconScanner implements TimeoutHandler.TimeoutCallback<Obje
 
     //region Properties
 
+    /**
+     * @param context to create {@link IBeaconScanner} with
+     * @return new {@link Initializer}
+     */
     public static Initializer newInitializer(@NonNull final Context context)
     {
         return new Initializer(context);
@@ -227,7 +251,7 @@ public final class IBeaconScanner implements TimeoutHandler.TimeoutCallback<Obje
         }
 
         /**
-         * After {@param exitTimeoutInMillis}, when a beacon is not seen, the exit callback:
+         * After {@code exitTimeoutInMillis}, when a beacon is not seen, the exit callback:
          * {@link Callback#didExitBeacon(Beacon)} is called.
          *
          * @param exitTimeoutInMillis
@@ -241,8 +265,8 @@ public final class IBeaconScanner implements TimeoutHandler.TimeoutCallback<Obje
         }
 
         /**
-         * Everytime you start or stop monitoring a {@link Beacon}, we wait {@param addBeaconTimeoutInMillis} before
-         * changes are applied. If you add several {@link Beacon}'s, this will evade that scans are stop-started everytime.
+         * Everytime you start or stop monitoring a {@link Beacon}, we wait {@code addBeaconTimeoutInMillis} before
+         * changes are applied. If you add several {@link Beacon}s, this will evade that scans are stop-started everytime.
          * Starting from Android N, if you start a scan more than 5 times in 30 seconds, scans are blocked.
          *
          * @param addBeaconTimeoutInMillis
@@ -280,12 +304,30 @@ public final class IBeaconScanner implements TimeoutHandler.TimeoutCallback<Obje
 
     //region Callback
 
+    /**
+     * Callback object that notifies of {@link Beacon} enter, exits or moinotiring fails.
+     */
     public interface Callback
     {
+        /**
+         * Device is inside the range of {@code beacon}.
+         *
+         * @param beacon
+         */
         void didEnterBeacon(Beacon beacon);
 
+        /**
+         * Device is outside the range of {@code beacon}.
+         *
+         * @param beacon
+         */
         void didExitBeacon(Beacon beacon);
 
+        /**
+         * Monitoring could not start due to {@code error}.
+         *
+         * @param error that happened
+         */
         void monitoringDidFail(Error error);
     }
 

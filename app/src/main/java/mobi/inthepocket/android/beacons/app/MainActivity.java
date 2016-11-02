@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements IBeaconScanner.Ca
 
         IBeaconScanner.getInstance().setCallback(this);
 
-        // add input filters on {@link EditText}'s.
+        // add input filters on {@link EditText}s.
         this.editTextMajor.setFilters(new InputFilter[]{new InputFilterMinMax("1", "65535")});
         this.editTextMinor.setFilters(new InputFilter[]{new InputFilterMinMax("1", "65535")});
 
@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements IBeaconScanner.Ca
     {
         if (this.isValid())
         {
-            IBeaconScanner.getInstance().startMonitoring(new Beacon.Builder()
+            IBeaconScanner.getInstance().startMonitoring(Beacon.newBuilder()
                     .setUUID(this.editTextUuid.getText().toString())
                     .setMajor(Integer.valueOf(this.editTextMajor.getText().toString()))
                     .setMinor(Integer.valueOf(this.editTextMinor.getText().toString()))
