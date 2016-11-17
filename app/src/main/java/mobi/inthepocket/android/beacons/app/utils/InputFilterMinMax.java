@@ -1,5 +1,6 @@
 package mobi.inthepocket.android.beacons.app.utils;
 
+import android.support.annotation.Nullable;
 import android.text.InputFilter;
 import android.text.Spanned;
 
@@ -18,13 +19,8 @@ public class InputFilterMinMax implements InputFilter
         this.max = max;
     }
 
-    public InputFilterMinMax(final String min, final String max)
-    {
-        this.min = Integer.parseInt(min);
-        this.max = Integer.parseInt(max);
-    }
-
     @Override
+    @Nullable
     public CharSequence filter(final CharSequence source, final int start, final int end, final Spanned dest, final int dstart, final int dend)
     {
         try
@@ -32,6 +28,7 @@ public class InputFilterMinMax implements InputFilter
             final int input = Integer.parseInt(dest.toString() + source.toString());
             if (isInRange(this.min, this.max, input))
             {
+                // return null to accept the input
                 return null;
             }
         }

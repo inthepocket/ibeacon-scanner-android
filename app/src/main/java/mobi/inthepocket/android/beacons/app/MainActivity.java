@@ -2,6 +2,7 @@ package mobi.inthepocket.android.beacons.app;
 
 import android.Manifest;
 import android.os.Bundle;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputFilter;
 import android.text.TextUtils;
@@ -17,19 +18,25 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import mobi.inthepocket.android.beacons.app.rxjava.RxObserver;
 import mobi.inthepocket.android.beacons.app.utils.InputFilterMinMax;
+import mobi.inthepocket.android.beacons.app.utils.UUIDUtils;
 import mobi.inthepocket.android.beacons.ibeaconscanner.Beacon;
 import mobi.inthepocket.android.beacons.ibeaconscanner.Error;
 import mobi.inthepocket.android.beacons.ibeaconscanner.IBeaconScanner;
-import mobi.inthepocket.android.beacons.app.utils.UUIDUtils;
 
 public class MainActivity extends AppCompatActivity implements IBeaconScanner.Callback
 {
     @BindView(R.id.textview_log)
     TextView textViewLog;
+    @BindView(R.id.textinputlayout_uuid)
+    TextInputLayout textInputLayoutUuid;
     @BindView(R.id.edittext_uuid)
     EditText editTextUuid;
+    @BindView(R.id.textinputlayout_major)
+    TextInputLayout textInputLayoutMajor;
     @BindView(R.id.edittext_major)
     EditText editTextMajor;
+    @BindView(R.id.textinputlayout_minor)
+    TextInputLayout textInputLayoutMinor;
     @BindView(R.id.edittext_minor)
     EditText editTextMinor;
     @BindView(R.id.button_start)
@@ -48,8 +55,8 @@ public class MainActivity extends AppCompatActivity implements IBeaconScanner.Ca
         IBeaconScanner.getInstance().setCallback(this);
 
         // add input filters on {@link EditText}s.
-        this.editTextMajor.setFilters(new InputFilter[]{new InputFilterMinMax("1", "65535")});
-        this.editTextMinor.setFilters(new InputFilter[]{new InputFilterMinMax("1", "65535")});
+        this.editTextMajor.setFilters(new InputFilter[]{new InputFilterMinMax(1, 65535)});
+        this.editTextMinor.setFilters(new InputFilter[]{new InputFilterMinMax(1, 65535)});
 
         RxPermissions.getInstance(this)
                 .request(Manifest.permission.ACCESS_COARSE_LOCATION)
@@ -128,33 +135,33 @@ public class MainActivity extends AppCompatActivity implements IBeaconScanner.Ca
         if (UUIDUtils.isValidUUID(this.editTextUuid.getText().toString()))
         {
             isValid = false;
-            this.editTextUuid.setError(this.getString(R.string.uuid_error));
+            this.textInputLayoutUuid.setError(this.getString(R.string.uuid_error));
         }
         else
         {
-            this.editTextUuid.setError(null);
+            this.textInputLayoutUuid.setError(null);
         }
 
         final String major = this.editTextMajor.getText().toString();
         if (TextUtils.isEmpty(major))
         {
             isValid = false;
-            this.editTextMajor.setError(this.getString(R.string.major_error));
+            this.textInputLayoutMajor.setError(this.getString(R.string.major_error));
         }
         else
         {
-            this.editTextMajor.setError(null);
+            this.textInputLayoutMajor.setError(null);
         }
 
         final String minor = this.editTextMinor.getText().toString();
         if (TextUtils.isEmpty(minor))
         {
             isValid = false;
-            this.editTextMinor.setError(this.getString(R.string.minor_error));
+            this.textInputLayoutMinor.setError(this.getString(R.string.minor_error));
         }
         else
         {
-            this.editTextMinor.setError(null);
+            this.textInputLayoutMinor.setError(null);
         }
 
         return isValid;

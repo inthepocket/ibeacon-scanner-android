@@ -8,8 +8,6 @@ import android.support.annotation.NonNull;
 import mobi.inthepocket.android.beacons.ibeaconscanner.interfaces.BeaconInterface;
 
 /**
- * Created by eliaslecomte on 23/09/2016.
- *
  * Utils class to create {@link ScanFilter}s for a {@link BeaconInterface}.
  */
 

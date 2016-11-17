@@ -5,9 +5,7 @@ import android.support.annotation.NonNull;
 import java.util.UUID;
 
 /**
- * Created by eliaslecomte on 27/09/2016.
- *
- * Utils class to help with conversion of Bytes to Hex,
+ * Utils class to help with conversion of Bytes to Hex.
  */
 
 public final class ConversionUtils

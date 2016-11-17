@@ -16,6 +16,7 @@ import static org.junit.Assert.assertNotNull;
  * Created by eliaslecomte on 30/09/2016.
  */
 
+@SuppressWarnings("UnusedAssignment")
 public class BeaconTest
 {
     private static final int MAJOR_MINOR_MAX_VALUE = 65535;

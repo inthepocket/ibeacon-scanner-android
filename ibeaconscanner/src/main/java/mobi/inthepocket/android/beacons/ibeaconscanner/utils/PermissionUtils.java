@@ -10,9 +10,7 @@ import android.support.annotation.NonNull;
 import java.security.InvalidParameterException;
 
 /**
- * PermissionUtils to help determine if a particular permission is granted
- * <p/>
- * Created by eliaslecomte on 04/04/16.
+ * PermissionUtils to help determine if a particular permission is granted.
  */
 
 public final class PermissionUtils
