@@ -21,8 +21,6 @@ public final class PermissionTestHelper
     private static final int PERMISSIONS_DIALOG_DELAY = 1000;
     private static final int GRANT_BUTTON_INDEX = 1;
 
-    private static final String TEXT_ALLOW = "Allow";
-
     private PermissionTestHelper()
     {
     }

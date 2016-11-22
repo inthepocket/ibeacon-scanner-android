@@ -56,7 +56,7 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:support-annotations:25.0.0'
+    compile 'com.android.support:support-annotations:25.0.1'
 
     testCompile 'junit:junit:4.12'
 }
@@ -133,8 +133,8 @@ artifacts {
 sonarqube {
     properties {
         property "sonar.java.coveragePlugin", "jacoco"
-        property "sonar.jacoco.reportPath", "build/jacoco/testDebugUnitTest.exec"
-        property "sonar.junit.reportsPath", "build/test-results/debug/" // path to junit reports
-        property "sonar.android.lint.report", "build/outputs/lint-results-debug.xml" // path to lint reports
+        property "sonar.jacoco.reportPath", "build/jacoco/testDebugUnitTest.exec" // junit coverage report
+        property "sonar.junit.reportsPath", "build/combined/" // path to UI + junit reports
+        property "sonar.android.lint.report", "build/outputs/lint-results-debug.xml" // path to lint report
     }
 }

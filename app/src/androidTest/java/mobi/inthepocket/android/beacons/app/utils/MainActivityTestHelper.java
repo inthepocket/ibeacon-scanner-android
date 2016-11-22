@@ -42,27 +42,37 @@ public class MainActivityTestHelper
         onView(ViewMatchers.withId(R.id.edittext_minor)).perform(replaceText(value)).perform(closeSoftKeyboard());
     }
 
-    public void assertUUIDHasNoErrorShown()
+    public void assertUUIDHasNoErrorMessage()
     {
         TextInputLayoutTestUtils.onErrorViewWithinTilWithId(R.id.textinputlayout_uuid).check(doesNotExist());
     }
 
-    public void assertUUIDIsWrongErrorShown()
+    public void assertUUIDHasErrorMessage()
     {
         final String expectedError = this.activityTestRule.getActivity().getString(R.string.uuid_error);
         TextInputLayoutTestUtils.onErrorViewWithinTilWithId(R.id.textinputlayout_uuid).check(matches(withText(expectedError)));
     }
 
-    public void assertMajorIsWrong()
+    public void assertMajorHasErrorMessage()
     {
         final String expectedError = this.activityTestRule.getActivity().getString(R.string.major_error);
         TextInputLayoutTestUtils.onErrorViewWithinTilWithId(R.id.textinputlayout_major).check(matches(withText(expectedError)));
     }
 
-    public void assertMinorIsWrong()
+    public void assertMajorHasNoErrorMessage()
+    {
+        TextInputLayoutTestUtils.onErrorViewWithinTilWithId(R.id.textinputlayout_major).check(doesNotExist());
+    }
+
+    public void assertMinorHasErrorMessage()
     {
         final String expectedError = this.activityTestRule.getActivity().getString(R.string.minor_error);
         TextInputLayoutTestUtils.onErrorViewWithinTilWithId(R.id.textinputlayout_minor).check(matches(withText(expectedError)));
+    }
+
+    public void assertMinorHasNoErrorMessage()
+    {
+        TextInputLayoutTestUtils.onErrorViewWithinTilWithId(R.id.textinputlayout_minor).check(doesNotExist());
     }
 
     public void clickOnButton(final int viewId)

@@ -4,6 +4,32 @@ jacoco {
     toolVersion "0.7.6.201602180812"
 }
 
+task combineTestReports(dependsOn: "testDebugUnitTest") {
+    group = "Reporting"
+
+    doLast {
+        File combined = file("${buildDir}/combined")
+        if (combined.exists()) {
+            combined.deleteDir()
+        }
+        combined.mkdirs();
+
+        def testDirs = [file("${buildDir}/test-results/debug/"),
+                        file("${buildDir}/outputs/androidTest-results/connected/")];
+
+        testDirs.each { testDir ->
+            if (!testDir.exists()) {
+                logging.captureStandardOutput LogLevel.WARN
+                println "WARNING: ignoring non-existant ${testDir.path}"
+                return;
+            }
+            files(testDir.listFiles()).each { file ->
+                new File(combined, file.getName()) << file.text
+            }
+        }
+    }
+}
+
 task jacocoTestReport(type: JacocoReport, dependsOn: "testDebugUnitTest") {
     group = "Reporting"
     description = "Generate Jacoco coverage reports"
@@ -18,18 +44,11 @@ task jacocoTestReport(type: JacocoReport, dependsOn: "testDebugUnitTest") {
                       '**/BuildConfig.*',
                       '**/Manifest*.*',
                       'android/**/*.*',
-                      '**/Lambda$*.class', //Retrolambda
                       '**/Lambda.class',
                       '**/*Lambda.class',
                       '**/*Lambda*.class',
                       '**/*Lambda*.*',
-                      '**/*Builder.*',
-                      '**/*_MembersInjector.class',  //Dagger2 generated code
-                      '**/*_MembersInjector*.*',  //Dagger2 generated code
-                      '**/*_*Factory*.*', //Dagger2 generated code
-                      '**/*Component*.*', //Dagger2 generated code
-                      '**/*Module*.*' //Dagger2 generated code
-    ]
+                      '**/*Builder.*',]
     def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/debug", excludes: fileFilter)
     def mainSrc = "${project.projectDir}/src/main/java"
 

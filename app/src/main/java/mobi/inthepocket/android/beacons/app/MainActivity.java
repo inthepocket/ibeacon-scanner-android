@@ -77,6 +77,9 @@ public class MainActivity extends AppCompatActivity implements IBeaconScanner.Ca
                 });
     }
 
+    /**
+     * Start monitoring for {@link Beacon} provided with UI.
+     */
     @OnClick(R.id.button_start)
     public void onButtonStartClicked()
     {
@@ -90,6 +93,9 @@ public class MainActivity extends AppCompatActivity implements IBeaconScanner.Ca
         }
     }
 
+    /**
+     * Stop all beacon monitoring.
+     */
     @OnClick(R.id.button_stop)
     public void onButtonStopClicked()
     {
@@ -132,7 +138,8 @@ public class MainActivity extends AppCompatActivity implements IBeaconScanner.Ca
     {
         boolean isValid = true;
 
-        if (UUIDUtils.isValidUUID(this.editTextUuid.getText().toString()))
+        final String UUID = this.editTextUuid.getText().toString();
+        if (!UUIDUtils.isValidUUID(UUID))
         {
             isValid = false;
             this.textInputLayoutUuid.setError(this.getString(R.string.uuid_error));

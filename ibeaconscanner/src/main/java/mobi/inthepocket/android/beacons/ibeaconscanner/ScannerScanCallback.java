@@ -97,11 +97,9 @@ public class ScannerScanCallback extends ScanCallback implements TimeoutHandler.
                 final UUID uuid = ConversionUtils.bytesToUuid(uuidBytes);
 
                 // get the major from hex result
-                //final int major = (scanRecord[startByte + 20] & 0xff) * 0x100 + (scanRecord[startByte + 21] & 0xff);
                 final int major = ConversionUtils.byteArrayToInteger(Arrays.copyOfRange(scanRecord, startByte + 20, startByte + 22));
 
                 // get the minor from hex result
-                //final int minor = (scanRecord[startByte + 22] & 0xff) * 0x100 + (scanRecord[startByte + 23] & 0xff);
                 final int minor = ConversionUtils.byteArrayToInteger(Arrays.copyOfRange(scanRecord, startByte + 22, startByte + 24));
 
                 final Beacon beacon = Beacon.newBuilder()

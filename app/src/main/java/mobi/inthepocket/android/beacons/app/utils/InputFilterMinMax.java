@@ -13,6 +13,12 @@ public class InputFilterMinMax implements InputFilter
     private final int min;
     private final int max;
 
+    /**
+     * Create a new {@link InputFilter} defining a minimum and maximum value.
+     *
+     * @param min minimum value the {@link android.widget.EditText} can have
+     * @param max maximum value the {@link android.widget.EditText} can have
+     */
     public InputFilterMinMax(final int min, final int max)
     {
         this.min = min;

@@ -1,14 +1,13 @@
 package mobi.inthepocket.android.beacons.app;
 
 import android.support.test.rule.ActivityTestRule;
-import android.support.test.uiautomator.UiObjectNotFoundException;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import mobi.inthepocket.android.beacons.app.utils.PermissionTestHelper;
 import mobi.inthepocket.android.beacons.app.utils.MainActivityTestHelper;
+import mobi.inthepocket.android.beacons.app.utils.PermissionTestHelper;
 
 /**
  * Created by eliaslecomte on 29/10/2016.
@@ -27,7 +26,7 @@ public class MainActivityTest
     }
 
     @Before
-    public void acceptLocationPermission() throws UiObjectNotFoundException
+    public void acceptLocationPermission()
     {
         PermissionTestHelper.allowLocationPermissionWhenAsked();
     }
@@ -41,7 +40,7 @@ public class MainActivityTest
 
         this.mainActivityTestHelper.clickOnButton(R.id.button_start);
 
-        this.mainActivityTestHelper.assertUUIDHasNoErrorShown();
+        this.mainActivityTestHelper.assertUUIDHasNoErrorMessage();
     }
 
     @Test
@@ -51,7 +50,7 @@ public class MainActivityTest
 
         this.mainActivityTestHelper.clickOnButton(R.id.button_start);
 
-        this.mainActivityTestHelper.assertUUIDIsWrongErrorShown();
+        this.mainActivityTestHelper.assertUUIDHasErrorMessage();
     }
 
     @Test
@@ -61,7 +60,7 @@ public class MainActivityTest
 
         this.mainActivityTestHelper.clickOnButton(R.id.button_start);
 
-        this.mainActivityTestHelper.assertMajorIsWrong();
+        this.mainActivityTestHelper.assertMajorHasErrorMessage();
     }
 
     @Test
@@ -71,7 +70,27 @@ public class MainActivityTest
 
         this.mainActivityTestHelper.clickOnButton(R.id.button_start);
 
-        this.mainActivityTestHelper.assertMinorIsWrong();
+        this.mainActivityTestHelper.assertMinorHasErrorMessage();
+    }
+
+    @Test
+    public void onCorrectMajorTest()
+    {
+        this.mainActivityTestHelper.inputMajor("15");
+
+        this.mainActivityTestHelper.clickOnButton(R.id.button_start);
+
+        this.mainActivityTestHelper.assertMajorHasNoErrorMessage();
+    }
+
+    @Test
+    public void onCorrectMinorTest()
+    {
+        this.mainActivityTestHelper.inputMinor("15");
+
+        this.mainActivityTestHelper.clickOnButton(R.id.button_start);
+
+        this.mainActivityTestHelper.assertMinorHasNoErrorMessage();
     }
 
     //endregion

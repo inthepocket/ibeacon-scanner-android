@@ -9,9 +9,9 @@ android {
         applicationId "mobi.inthepocket.android.beacons.app"
         minSdkVersion 11
         targetSdkVersion 25
-        versionCode 1
-        versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        versionCode 2
+        versionName "1.1"
+        testInstrumentationRunner "mobi.inthepocket.android.beacons.app.TestRunner"
     }
 
     buildTypes {
@@ -34,17 +34,17 @@ android {
 
 dependencies {
     compile project(':ibeaconscanner') // library to scan for iBeacons
-    compile 'com.android.support:appcompat-v7:25.0.0'
-    compile 'com.android.support:design:25.0.0'
+    compile 'com.android.support:appcompat-v7:25.0.1'
+    compile 'com.android.support:design:25.0.1'
     compile 'io.reactivex:rxjava:1.2.0' // rxjava
     compile 'com.tbruyelle.rxpermissions:rxpermissions:0.7.0@aar' // library to handle location permission
     compile 'com.facebook.stetho:stetho:1.4.1' // stetho to easily see our database
-    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5' // leak canary to check for leaks
-    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5' // leak canary to check for leaks
+    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5' // leak canary to detect leaks
+    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5' // leak canary to detect leaks
     compile 'com.jakewharton:butterknife:8.4.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
 
-    androidTestCompile 'com.android.support:support-annotations:25.0.0'
+    androidTestCompile 'com.android.support:support-annotations:25.0.1'
     androidTestCompile('com.android.support.test:runner:0.5') {
         exclude module: 'support-annotations'
     }
@@ -52,6 +52,9 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
     androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.2'
+    androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.0' // for mockito
+    androidTestCompile 'com.google.dexmaker:dexmaker:1.0' // for mockito
+    androidTestCompile 'org.mockito:mockito-core:1.10.17' // for mockito
 
     testCompile 'junit:junit:4.12'
 }
@@ -59,5 +62,8 @@ dependencies {
 sonarqube {
     properties {
         property "sonar.java.coveragePlugin", "jacoco"
+        property "sonar.jacoco.reportPath", "build/jacoco/testDebugUnitTest.exec" // junit coverage report
+        property "sonar.junit.reportsPath", "build/combined/" // path to UI + junit reports
+        property "sonar.android.lint.report", "build/outputs/lint-results-debug.xml" // path to lint report
     }
 }
