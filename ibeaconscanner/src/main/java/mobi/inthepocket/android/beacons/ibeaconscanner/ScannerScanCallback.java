@@ -26,7 +26,7 @@ import mobi.inthepocket.android.beacons.ibeaconscanner.utils.ConversionUtils;
  * Created by eliaslecomte on 28/09/2016.
  *
  * Class is responseable for:
- * - Reading beacon information from {@link ScanResult}'s that are triggered by the {@link android.bluetooth.le.BluetoothLeScanner}.
+ * - Reading beacon information from {@link ScanResult}s that are triggered by the {@link android.bluetooth.le.BluetoothLeScanner}.
  * - Bookkeeping of beacon triggers so it can determine weather a beacon entered or exited a {@link Beacon}.
  * - Calling {@link IBeaconScanner.Callback#didEnterBeacon(Beacon)} and
  *  {@link IBeaconScanner.Callback#didExitBeacon(Beacon)}.
@@ -35,7 +35,7 @@ import mobi.inthepocket.android.beacons.ibeaconscanner.utils.ConversionUtils;
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class ScannerScanCallback extends ScanCallback implements TimeoutHandler.TimeoutCallback<Beacon>
 {
-    private final static String TAG = ScanCallback.class.getSimpleName();
+    private static final String TAG = ScanCallback.class.getSimpleName();
 
     private final BeaconsSeenProvider beaconsSeenProvider;
     private final OnExitHandler onExitHandler;
@@ -75,9 +75,6 @@ public class ScannerScanCallback extends ScanCallback implements TimeoutHandler.
         {
             final byte[] scanRecord = scanResult.getScanRecord().getBytes();
 
-            // get Rssi of device
-            final int rssi = scanResult.getRssi();
-
             int startByte = 2;
             boolean patternFound = false;
             while (startByte <= 5)
@@ -100,14 +97,12 @@ public class ScannerScanCallback extends ScanCallback implements TimeoutHandler.
                 final UUID uuid = ConversionUtils.bytesToUuid(uuidBytes);
 
                 // get the major from hex result
-                //final int major = (scanRecord[startByte + 20] & 0xff) * 0x100 + (scanRecord[startByte + 21] & 0xff);
                 final int major = ConversionUtils.byteArrayToInteger(Arrays.copyOfRange(scanRecord, startByte + 20, startByte + 22));
 
                 // get the minor from hex result
-                //final int minor = (scanRecord[startByte + 22] & 0xff) * 0x100 + (scanRecord[startByte + 23] & 0xff);
                 final int minor = ConversionUtils.byteArrayToInteger(Arrays.copyOfRange(scanRecord, startByte + 22, startByte + 24));
 
-                final Beacon beacon = new Beacon.Builder()
+                final Beacon beacon = Beacon.newBuilder()
                         .setUUID(uuid)
                         .setMajor(major)
                         .setMinor(minor)
@@ -132,7 +127,7 @@ public class ScannerScanCallback extends ScanCallback implements TimeoutHandler.
 
                     cursor.close();
 
-                    if (beaconSeens.size() == 0)
+                    if (beaconSeens.isEmpty())
                     {
                         // this beacon is not yet in our database, trigger {@link IBeaconScanner.Callback#didEnterBeacon}
                         if (this.callback != null)
@@ -167,7 +162,7 @@ public class ScannerScanCallback extends ScanCallback implements TimeoutHandler.
     }
 
     /**
-     * Restarts countdown timers for entered {@link Beacon}'s that were not yet exited.
+     * Restarts countdown timers for entered {@link Beacon}s that were not yet exited.
      */
     private void resumeExits()
     {
@@ -190,7 +185,8 @@ public class ScannerScanCallback extends ScanCallback implements TimeoutHandler.
 
             for (final BeaconSeen beaconSeen : beaconSeens)
             {
-                final Beacon beacon = new Beacon.Builder().setUUID(beaconSeen.getUuid())
+                final Beacon beacon = Beacon.newBuilder()
+                        .setUUID(beaconSeen.getUuid())
                         .setMajor(beaconSeen.getMajor())
                         .setMinor(beaconSeen.getMinor())
                         .build();

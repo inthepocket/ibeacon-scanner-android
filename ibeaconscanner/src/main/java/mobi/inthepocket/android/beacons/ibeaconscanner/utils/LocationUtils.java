@@ -23,7 +23,7 @@ public final class LocationUtils
      *
      * @param context to determine with if location is on
      * @return true if location is turned on or the sdk is below Android M.
-     * @throws InvalidParameterException if {@param context} is null
+     * @throws InvalidParameterException if {@code context} is null
      */
     public static boolean isLocationOn(final Context context)
     {

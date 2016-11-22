@@ -2,35 +2,47 @@ package mobi.inthepocket.android.beacons.app;
 
 import android.Manifest;
 import android.os.Bundle;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
+import android.text.InputFilter;
+import android.text.TextUtils;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.tbruyelle.rxpermissions.RxPermissions;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import mobi.inthepocket.android.beacons.app.rxjava.RxObserver;
+import mobi.inthepocket.android.beacons.app.utils.InputFilterMinMax;
+import mobi.inthepocket.android.beacons.app.utils.UUIDUtils;
 import mobi.inthepocket.android.beacons.ibeaconscanner.Beacon;
 import mobi.inthepocket.android.beacons.ibeaconscanner.Error;
 import mobi.inthepocket.android.beacons.ibeaconscanner.IBeaconScanner;
 
 public class MainActivity extends AppCompatActivity implements IBeaconScanner.Callback
 {
-    private final static String TAG = MainActivity.class.getSimpleName();
-    private final static String EXAMPLE_BEACON_1_UUID = "84be19d4-797d-11e5-8bcf-feff819cdc9f";
-    private final static int EXAMPLE_BEACON_1_MAJOR = 1;
-    private final static int EXAMPLE_BEACON_1_MINOR = 1;
-    private final static String EXAMPLE_BEACON_2_UUID = "00000000-0000-0000-0000-000000000008";
-    private final static int EXAMPLE_BEACON_2_MAJOR = 10;
-    private final static int EXAMPLE_BEACON_2_MINOR = 8;
-
-    private TextView textViewLog;
-    private Button buttonAddFiveMore;
-    private Button buttonStartScanning;
-    private Button buttonStopScanning;
-
-    private int nextMinor = 1;
+    @BindView(R.id.textview_log)
+    TextView textViewLog;
+    @BindView(R.id.textinputlayout_uuid)
+    TextInputLayout textInputLayoutUuid;
+    @BindView(R.id.edittext_uuid)
+    EditText editTextUuid;
+    @BindView(R.id.textinputlayout_major)
+    TextInputLayout textInputLayoutMajor;
+    @BindView(R.id.edittext_major)
+    EditText editTextMajor;
+    @BindView(R.id.textinputlayout_minor)
+    TextInputLayout textInputLayoutMinor;
+    @BindView(R.id.edittext_minor)
+    EditText editTextMinor;
+    @BindView(R.id.button_start)
+    Button buttonStartScanning;
+    @BindView(R.id.button_stop)
+    Button buttonStopScanning;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState)
@@ -38,72 +50,56 @@ public class MainActivity extends AppCompatActivity implements IBeaconScanner.Ca
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.activity_main);
 
+        ButterKnife.bind(this);
+
         IBeaconScanner.getInstance().setCallback(this);
 
-        this.textViewLog = (TextView) this.findViewById(R.id.textview_log);
-        this.buttonStartScanning = (Button) this.findViewById(R.id.button_start);
-        this.buttonStartScanning.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(final View view)
-            {
-                IBeaconScanner.getInstance().startMonitoring(new Beacon.Builder()
-                        .setUUID(EXAMPLE_BEACON_2_UUID)
-                        .setMajor(EXAMPLE_BEACON_2_MAJOR)
-                        .setMinor(EXAMPLE_BEACON_2_MINOR)
-                        .build());
-            }
-        });
-        this.buttonStopScanning= (Button) this.findViewById(R.id.button_stop);
-        this.buttonStopScanning.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(final View view)
-            {
-                MainActivity.this.nextMinor = 1;
-                IBeaconScanner.getInstance().stop();
-            }
-        });
-        this.buttonAddFiveMore = (Button) this.findViewById(R.id.button_add_five_more);
-        this.buttonAddFiveMore.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(final View view)
-            {
-                final int till = MainActivity.this.nextMinor + 5;
-                for (int i = MainActivity.this.nextMinor; i <= till ; i++)
-                {
-                    IBeaconScanner.getInstance().startMonitoring(new Beacon.Builder()
-                            .setUUID(EXAMPLE_BEACON_1_UUID)
-                            .setMajor(EXAMPLE_BEACON_1_MAJOR)
-                            .setMinor(i)
-                            .build());
-                }
-
-                MainActivity.this.nextMinor = till+1;
-            }
-        });
+        // add input filters on {@link EditText}s.
+        this.editTextMajor.setFilters(new InputFilter[]{new InputFilterMinMax(1, 65535)});
+        this.editTextMinor.setFilters(new InputFilter[]{new InputFilterMinMax(1, 65535)});
 
         RxPermissions.getInstance(this)
                 .request(Manifest.permission.ACCESS_COARSE_LOCATION)
                 .subscribe(new RxObserver<Boolean>()
-                           {
-                               @Override
-                               public void onNext(final Boolean granted)
-                               {
-                                   if (granted)
-                                   {
-                                       MainActivity.this.beaconsEnabled(true);
-                                   }
-                                   else
-                                   {
-                                       MainActivity.this.beaconsEnabled(false);
-                                       // Oops permission denied
-                                   }
-                               }
-                           });
+                {
+                    @Override
+                    public void onNext(final Boolean granted)
+                    {
+                        if (granted)
+                        {
+                            MainActivity.this.beaconsEnabled(true);
+                        } else
+                        {
+                            MainActivity.this.beaconsEnabled(false);
+                            // Oh no permission denied
+                        }
+                    }
+                });
+    }
 
+    /**
+     * Start monitoring for {@link Beacon} provided with UI.
+     */
+    @OnClick(R.id.button_start)
+    public void onButtonStartClicked()
+    {
+        if (this.isValid())
+        {
+            IBeaconScanner.getInstance().startMonitoring(Beacon.newBuilder()
+                    .setUUID(this.editTextUuid.getText().toString())
+                    .setMajor(Integer.valueOf(this.editTextMajor.getText().toString()))
+                    .setMinor(Integer.valueOf(this.editTextMinor.getText().toString()))
+                    .build());
+        }
+    }
 
+    /**
+     * Stop all beacon monitoring.
+     */
+    @OnClick(R.id.button_stop)
+    public void onButtonStopClicked()
+    {
+        IBeaconScanner.getInstance().stop();
     }
 
     //region Callback
@@ -136,7 +132,46 @@ public class MainActivity extends AppCompatActivity implements IBeaconScanner.Ca
     {
         this.buttonStartScanning.setEnabled(isEnabled);
         this.buttonStopScanning.setEnabled(isEnabled);
-        this.buttonAddFiveMore.setEnabled(isEnabled);
+    }
+
+    private boolean isValid()
+    {
+        boolean isValid = true;
+
+        final String UUID = this.editTextUuid.getText().toString();
+        if (!UUIDUtils.isValidUUID(UUID))
+        {
+            isValid = false;
+            this.textInputLayoutUuid.setError(this.getString(R.string.uuid_error));
+        }
+        else
+        {
+            this.textInputLayoutUuid.setError(null);
+        }
+
+        final String major = this.editTextMajor.getText().toString();
+        if (TextUtils.isEmpty(major))
+        {
+            isValid = false;
+            this.textInputLayoutMajor.setError(this.getString(R.string.major_error));
+        }
+        else
+        {
+            this.textInputLayoutMajor.setError(null);
+        }
+
+        final String minor = this.editTextMinor.getText().toString();
+        if (TextUtils.isEmpty(minor))
+        {
+            isValid = false;
+            this.textInputLayoutMinor.setError(this.getString(R.string.minor_error));
+        }
+        else
+        {
+            this.textInputLayoutMinor.setError(null);
+        }
+
+        return isValid;
     }
 
     private void updateLog(final String logMessage)

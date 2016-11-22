@@ -5,13 +5,13 @@ import android.support.annotation.NonNull;
 import java.util.UUID;
 
 /**
- * Created by eliaslecomte on 27/09/2016.
- *
- * Utils class to help with conversion of Bytes to Hex,
+ * Utils class to help with conversion of Bytes to Hex.
  */
 
 public final class ConversionUtils
 {
+    private static final char[] hexArray = "0123456789ABCDEF".toCharArray();
+
     private ConversionUtils()
     {
     }
@@ -23,7 +23,6 @@ public final class ConversionUtils
      * @param bytes Byte[] to convert
      * @return UUID
      */
-    static final char[] hexArray = "0123456789ABCDEF".toCharArray();
     public static UUID bytesToUuid(@NonNull final byte[] bytes)
     {
         final char[] hexChars = new char[bytes.length * 2];
@@ -73,8 +72,8 @@ public final class ConversionUtils
     public static byte[] integerToByteArray(final int value)
     {
         final byte[] result = new byte[2];
-        result[0] = (byte) (value / 256); // Byte.parseByte(String.valueOf(value / 256), 16);
-        result[1] = (byte) (value % 256); // Byte.parseByte(String.valueOf(value % 256), 16);
+        result[0] = (byte) (value / 256);
+        result[1] = (byte) (value % 256);
 
         return result;
     }

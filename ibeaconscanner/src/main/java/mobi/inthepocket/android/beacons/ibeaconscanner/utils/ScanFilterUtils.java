@@ -5,24 +5,22 @@ import android.bluetooth.le.ScanFilter;
 import android.os.Build;
 import android.support.annotation.NonNull;
 
-import mobi.inthepocket.android.beacons.ibeaconscanner.interfaces.BeacinInterface;
+import mobi.inthepocket.android.beacons.ibeaconscanner.interfaces.BeaconInterface;
 
 /**
- * Created by eliaslecomte on 23/09/2016.
- *
- * Utils class to create {@link ScanFilter}'s for a {@link BeacinInterface}.
+ * Utils class to create {@link ScanFilter}s for a {@link BeaconInterface}.
  */
 
 public final class ScanFilterUtils
 {
-    private final static int MANUFACTURER_ID = 76;
+    private static final int MANUFACTURER_ID = 76;
 
     private ScanFilterUtils()
     {
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public static ScanFilter getScanFilter(@NonNull final BeacinInterface beacon)
+    public static ScanFilter getScanFilter(@NonNull final BeaconInterface beacon)
     {
         final ScanFilter.Builder builder = new ScanFilter.Builder();
 
