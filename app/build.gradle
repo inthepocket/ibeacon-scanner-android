@@ -9,8 +9,8 @@ android {
         applicationId "mobi.inthepocket.android.beacons.app"
         minSdkVersion 11
         targetSdkVersion 25
-        versionCode 2
-        versionName "1.1"
+        versionCode 1
+        versionName "1"
         testInstrumentationRunner "mobi.inthepocket.android.beacons.app.TestRunner"
     }
 
