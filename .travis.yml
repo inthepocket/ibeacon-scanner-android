@@ -28,6 +28,7 @@ env:
     # install timeout in minutes (2 minutes by default)
     - ADB_INSTALL_TIMEOUT=25
     - GRADLE_OPTS="-Xms128m"
+    - MALLOC_ARENA_MAX=2
 
 before_script:
   - echo no | android create avd --force -n test -t android-21 --abi armeabi-v7a
