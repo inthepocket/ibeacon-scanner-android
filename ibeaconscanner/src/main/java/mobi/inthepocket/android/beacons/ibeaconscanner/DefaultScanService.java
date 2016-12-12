@@ -2,8 +2,6 @@ package mobi.inthepocket.android.beacons.ibeaconscanner;
 
 import android.Manifest;
 import android.annotation.TargetApi;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanSettings;
 import android.content.Context;
@@ -19,6 +17,7 @@ import java.util.Set;
 import mobi.inthepocket.android.beacons.ibeaconscanner.database.BeaconsSeenProvider;
 import mobi.inthepocket.android.beacons.ibeaconscanner.handlers.AddBeaconsHandler;
 import mobi.inthepocket.android.beacons.ibeaconscanner.handlers.TimeoutHandler;
+import mobi.inthepocket.android.beacons.ibeaconscanner.interfaces.BluetoothFactory;
 import mobi.inthepocket.android.beacons.ibeaconscanner.utils.BluetoothUtils;
 import mobi.inthepocket.android.beacons.ibeaconscanner.utils.LocationUtils;
 import mobi.inthepocket.android.beacons.ibeaconscanner.utils.PermissionUtils;
@@ -34,7 +33,7 @@ import mobi.inthepocket.android.beacons.ibeaconscanner.utils.ScanFilterUtils;
 final class DefaultScanService implements ScanService, TimeoutHandler.TimeoutCallback<Object>
 {
     private final Context context;
-    private BluetoothLeScanner bluetoothLeScanner;
+    private final BluetoothFactory bluetoothFactory;
     private final ScannerScanCallback scannerScanCallback;
 
     private IBeaconScanner.Callback callback;
@@ -49,8 +48,8 @@ final class DefaultScanService implements ScanService, TimeoutHandler.TimeoutCal
 
         this.context = initializer.context;
         this.scannerScanCallback = new ScannerScanCallback(beaconsSeenProvider, initializer.exitTimeoutInMillis);
-        final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        this.bluetoothLeScanner = bluetoothAdapter.getBluetoothLeScanner();
+
+        this.bluetoothFactory = initializer.bluetoothFactory;
 
         this.addBeaconsHandler = new AddBeaconsHandler(this, initializer.addBeaconTimeoutInMillis);
         this.timeoutObject = new Object();
@@ -130,23 +129,45 @@ final class DefaultScanService implements ScanService, TimeoutHandler.TimeoutCal
         // check if we can scan
         boolean canScan = true;
 
-        if (!BluetoothUtils.hasBluetoothLE(this.context))
+        // may have to reattach the BluetoothLeScanner
+        // verify if we can get the BluetoothAdapter (Samsung Knox disables Bluetooth permission).
+        if (this.bluetoothFactory.getBluetoothLeScanner() == null)
         {
-            canScan = false;
-
-            if (this.callback != null)
+            try
             {
-                this.callback.monitoringDidFail(Error.NO_BLUETOOTH_LE);
+                this.bluetoothFactory.createBluetoothLeScanner();
+            }
+            catch (final SecurityException securityException)
+            {
+                canScan = false;
+
+                if (this.callback != null)
+                {
+                    this.callback.monitoringDidFail(Error.NO_BLUETOOTH_PERMISSION);
+                }
             }
         }
 
-        if (!BluetoothUtils.isBluetoothOn())
+        if (this.bluetoothFactory.getBluetoothLeScanner() != null)
         {
-            canScan = false;
-
-            if (this.callback != null)
+            if (!BluetoothUtils.hasBluetoothLE(this.context))
             {
-                this.callback.monitoringDidFail(Error.BLUETOOTH_OFF);
+                canScan = false;
+
+                if (this.callback != null)
+                {
+                    this.callback.monitoringDidFail(Error.NO_BLUETOOTH_LE);
+                }
+            }
+
+            if (!BluetoothUtils.isBluetoothOn())
+            {
+                canScan = false;
+
+                if (this.callback != null)
+                {
+                    this.callback.monitoringDidFail(Error.BLUETOOTH_OFF);
+                }
             }
         }
 
@@ -172,15 +193,8 @@ final class DefaultScanService implements ScanService, TimeoutHandler.TimeoutCal
 
         if (canScan)
         {
-            // may have to reattach the le scanner
-            if (this.bluetoothLeScanner == null)
-            {
-                final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-                this.bluetoothLeScanner = bluetoothAdapter.getBluetoothLeScanner();
-            }
-
             // stop scanning
-            this.bluetoothLeScanner.stopScan(DefaultScanService.this.scannerScanCallback);
+            this.bluetoothFactory.getBluetoothLeScanner().stopScan(DefaultScanService.this.scannerScanCallback);
 
             // start scanning
             if (!this.beacons.isEmpty())
@@ -192,7 +206,7 @@ final class DefaultScanService implements ScanService, TimeoutHandler.TimeoutCal
                     scanFilters.add(ScanFilterUtils.getScanFilter(beacon));
                 }
 
-                this.bluetoothLeScanner.startScan(scanFilters, getScanSettings(), this.scannerScanCallback);
+                this.bluetoothFactory.getBluetoothLeScanner().startScan(scanFilters, getScanSettings(), this.scannerScanCallback);
             }
         }
     }
@@ -235,6 +249,7 @@ final class DefaultScanService implements ScanService, TimeoutHandler.TimeoutCal
         private final Context context;
         private long exitTimeoutInMillis;
         private long addBeaconTimeoutInMillis;
+        private BluetoothFactory bluetoothFactory;
 
         private Initializer(@NonNull final Context context)
         {
@@ -271,11 +286,24 @@ final class DefaultScanService implements ScanService, TimeoutHandler.TimeoutCal
         }
 
         /**
+         * Additionaly you can set a {@link BluetoothFactory} responsible for creating a {@link android.bluetooth.le.BluetoothLeScanner}.
+         *
+         * @param bluetoothFactory to use
+         * @return {@link DefaultScanService.Initializer}
+         */
+        public Initializer setBluetoothFactory(final BluetoothFactory bluetoothFactory)
+        {
+            this.bluetoothFactory = bluetoothFactory;
+
+            return this;
+        }
+
+        /**
          * Returns the {@link DefaultScanService.Initializer} and validates if the configuration is valid and sets default values.
          *
          * @return {@link DefaultScanService.Initializer}
          */
-        public Initializer build()
+        public DefaultScanService build()
         {
             if (this.exitTimeoutInMillis == 0)
             {
@@ -287,7 +315,12 @@ final class DefaultScanService implements ScanService, TimeoutHandler.TimeoutCal
                 this.addBeaconTimeoutInMillis = BuildConfig.ADD_BEACON_TIMEOUT_IN_MILLIS;
             }
 
-            return this;
+            if (this.bluetoothFactory == null)
+            {
+                this.bluetoothFactory = new DefaultBluetoothFactory();
+            }
+
+            return new DefaultScanService(this);
         }
     }
 

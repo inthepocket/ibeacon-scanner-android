@@ -6,7 +6,7 @@ import android.database.Cursor;
 import mobi.inthepocket.android.beacons.ibeaconscanner.interfaces.BeaconInterface;
 
 /**
- * While we are in range of a {@link mobi.inthepocket.android.beacons.ibeaconscanner.Beacon},
+ * While we are in range of a {@link BeaconInterface},
  * the model {@link BeaconSeen} is used to persist when we were last in the range of the
  * {@link mobi.inthepocket.android.beacons.ibeaconscanner.Beacon}.
  */
