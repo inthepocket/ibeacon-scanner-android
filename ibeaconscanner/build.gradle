@@ -28,7 +28,7 @@ if (System.env.TRAVIS == 'true') {
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.0"
+    buildToolsVersion "25.0.1"
 
     defaultConfig {
         minSdkVersion 11
@@ -52,6 +52,12 @@ android {
 
     lintOptions {
         abortOnError false
+    }
+
+    dexOptions {
+        if (System.env.TRAVIS == 'true') {
+            preDexLibraries = false
+        }
     }
 }
 

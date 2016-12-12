@@ -19,6 +19,12 @@ public final class ScanFilterUtils
     {
     }
 
+    /**
+     * Return a {@link ScanFilter} matching the given {@link BeaconInterface}.
+     *
+     * @param beacon to create {@link ScanFilter} for
+     * @return {@link ScanFilter} that matches {@code beacon}
+     */
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public static ScanFilter getScanFilter(@NonNull final BeaconInterface beacon)
     {

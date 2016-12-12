@@ -10,14 +10,19 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DatabaseHelper extends SQLiteOpenHelper
 {
-    private static final String databaseName = "ibeacon_scanner";
-    private static final int databaseVersion = 1;
+    private static final String DATABASE_NAME = "ibeacon_scanner";
+    private static final int DATABASE_VERSION = 1;
 
     final BeaconsSeenTable beaconsSeenTable;
 
+    /**
+     * Helper class to create and upgrade all tables used in iBeacon Scanner Android.
+     *
+     * @param context to create database with
+     */
     public DatabaseHelper(final Context context)
     {
-        super(context, databaseName, null, databaseVersion);
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
 
         this.beaconsSeenTable = new BeaconsSeenTable();
     }

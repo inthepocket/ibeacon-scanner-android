@@ -14,8 +14,6 @@ import android.support.annotation.NonNull;
 import java.util.List;
 
 /**
- * Created by eliaslecomte on 06/10/2016.
- * <p>
  * As {@link android.content.ContentProvider} can't be used in library projects, we created {@link BeaconsSeenProvider},
  * which is our entry point to the database. All queries are created here.
  */
@@ -39,12 +37,23 @@ public class BeaconsSeenProvider
         uriMatcher.addURI(PROVIDER_NAME, "/*", LIST);
     }
 
+    /**
+     * Create the database manager {@link BeaconsSeenProvider}.
+     *
+     * @param context to manage the database with
+     */
     public BeaconsSeenProvider(final Context context)
     {
         final DatabaseHelper databaseHelper = new DatabaseHelper(context);
         this.database = databaseHelper.getWritableDatabase();
     }
 
+    /**
+     * Query with {@code uri} parameters.
+     *
+     * @param uri parameters for the query
+     * @return cursor with query results
+     */
     public Cursor query(@NonNull final Uri uri)
     {
         String selection = null;
@@ -81,6 +90,13 @@ public class BeaconsSeenProvider
         return this.database.query(BeaconsSeenTable.TABLE_NAME, null, selection, selectionArgs, null, null, null);
     }
 
+    /**
+     * Insert {@code values} with parameters {@code uri}.
+     *
+     * @param uri parameters for the insert
+     * @param values to insert
+     * @return cursor with query results
+     */
     public Uri insert(@NonNull final Uri uri, @NonNull final ContentValues values)
     {
         long rowID = 0;
@@ -102,6 +118,12 @@ public class BeaconsSeenProvider
         throw new SQLException("Failed to insert row into " + uri);
     }
 
+    /**
+     * Delete {@code uri}.
+     *
+     * @param uri to delete
+     * @return number of rows that are deleted
+     */
     public int delete(@NonNull final Uri uri)
     {
         String selection = null;

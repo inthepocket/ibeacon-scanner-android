@@ -10,7 +10,7 @@ import java.util.UUID;
 
 public final class ConversionUtils
 {
-    private static final char[] hexArray = "0123456789ABCDEF".toCharArray();
+    private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
 
     private ConversionUtils()
     {
@@ -29,8 +29,8 @@ public final class ConversionUtils
         for ( int j = 0; j < bytes.length; j++ )
         {
             final int v = bytes[j] & 0xFF;
-            hexChars[j * 2] = hexArray[v >>> 4];
-            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+            hexChars[j * 2] = HEX_ARRAY[v >>> 4];
+            hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
         }
 
         final String hex = new String(hexChars);

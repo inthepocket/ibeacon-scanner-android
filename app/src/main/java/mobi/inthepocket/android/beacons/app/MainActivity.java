@@ -138,8 +138,8 @@ public class MainActivity extends AppCompatActivity implements IBeaconScanner.Ca
     {
         boolean isValid = true;
 
-        final String UUID = this.editTextUuid.getText().toString();
-        if (!UUIDUtils.isValidUUID(UUID))
+        final String uuid = this.editTextUuid.getText().toString();
+        if (!UUIDUtils.isValidUUID(uuid))
         {
             isValid = false;
             this.textInputLayoutUuid.setError(this.getString(R.string.uuid_error));

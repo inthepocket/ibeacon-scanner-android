@@ -42,11 +42,17 @@ public class ScannerScanCallback extends ScanCallback implements TimeoutHandler.
     private final long postDelayedInMillis;
     private IBeaconScanner.Callback callback;
 
-    public ScannerScanCallback(@NonNull final BeaconsSeenProvider beaconsSeenProvider, final long postDelayedInMillis)
+    /**
+     * Creates a new ScannerScanCallback.
+     *
+     * @param beaconsSeenProvider data service responsible for bookkeeping
+     * @param beaconExitTimeoutInMillis timeout after which a beacon is considered exited
+     */
+    public ScannerScanCallback(@NonNull final BeaconsSeenProvider beaconsSeenProvider, final long beaconExitTimeoutInMillis)
     {
         this.beaconsSeenProvider = beaconsSeenProvider;
-        this.onExitHandler = new OnExitHandler(this, postDelayedInMillis);
-        this.postDelayedInMillis = postDelayedInMillis;
+        this.onExitHandler = new OnExitHandler(this, beaconExitTimeoutInMillis);
+        this.postDelayedInMillis = beaconExitTimeoutInMillis;
 
         // remove obsolete BeaconSeen entries
         this.removeObsoleteBeaconSeenEntries();

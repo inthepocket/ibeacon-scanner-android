@@ -6,7 +6,9 @@ import android.database.Cursor;
 import mobi.inthepocket.android.beacons.ibeaconscanner.interfaces.BeaconInterface;
 
 /**
- * Created by eliaslecomte on 27/09/2016.
+ * While we are in range of a {@link mobi.inthepocket.android.beacons.ibeaconscanner.Beacon},
+ * the model {@link BeaconSeen} is used to persist when we were last in the range of the
+ * {@link mobi.inthepocket.android.beacons.ibeaconscanner.Beacon}.
  */
 
 public class BeaconSeen
@@ -18,6 +20,11 @@ public class BeaconSeen
 
     //region ContentValues
 
+    /**
+     * Construct a {@link BeaconSeen} from {@code cursor}.
+     *
+     * @param cursor to create {@link BeaconSeen} from
+     */
     public void constructFromCursor(final Cursor cursor)
     {
         this.uuid = DatabaseUtils.getString(cursor, BeaconsSeenTable.COLUMN_BEACON_UUID, BeaconsSeenTable.TABLE_NAME);
@@ -26,16 +33,33 @@ public class BeaconSeen
         this.timestamp = DatabaseUtils.getInt(cursor, BeaconsSeenTable.COLUMN_TIMESTAMP, BeaconsSeenTable.TABLE_NAME);
     }
 
+    /**
+     * @return {@link ContentValues} for this {@link BeaconSeen}
+     */
     public ContentValues getContentValues()
     {
         return getContentValues(this.uuid, this.major, this.minor, this.timestamp);
     }
 
+    /**
+     * Returns the {@link ContentValues} for the {@code beacon} and {@code timestamp}.
+     *
+     * @param beacon
+     * @param timestamp
+     * @return {@link ContentValues} for the {@code beacon} and {@code timestamp}
+     */
     public static ContentValues getContentValues(final BeaconInterface beacon, final long timestamp)
     {
         return getContentValues(beacon.getUUID().toString(), beacon.getMajor(), beacon.getMinor(), timestamp);
     }
 
+    /**
+     * @param uuid
+     * @param major
+     * @param minor
+     * @param timestamp
+     * @return {@link ContentValues} for the {@code uuid}, {@code major}, {@code minor}, {@code timestamp}
+     */
     public static ContentValues getContentValues(final String uuid, final int major, final int minor, final long timestamp)
     {
         final ContentValues contentValues = new ContentValues();

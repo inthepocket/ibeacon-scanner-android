@@ -1,9 +1,22 @@
 apply plugin: 'com.android.application'
 apply from: '../jacoco.gradle'
 
+if (System.env.TRAVIS == 'true') {
+    allprojects {
+        tasks.withType(GroovyCompile) {
+            groovyOptions.fork = false
+        }
+        tasks.withType(Test) {
+            // containers (currently) have 2 dedicated cores and 4GB of memory
+            maxParallelForks = 2
+            minHeapSize = '128m'
+        }
+    }
+}
+
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.0"
+    buildToolsVersion "25.0.1"
 
     defaultConfig {
         applicationId "mobi.inthepocket.android.beacons.app"
@@ -29,6 +42,12 @@ android {
 
     lintOptions {
         abortOnError false
+    }
+
+    dexOptions {
+        if (System.env.TRAVIS == 'true') {
+            preDexLibraries = false
+        }
     }
 }
 
