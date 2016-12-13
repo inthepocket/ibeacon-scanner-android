@@ -129,26 +129,17 @@ final class DefaultScanService implements ScanService, TimeoutHandler.TimeoutCal
         // check if we can scan
         boolean canScan = true;
 
-        // may have to reattach the BluetoothLeScanner
-        // verify if we can get the BluetoothAdapter (Samsung Knox disables Bluetooth permission).
-        if (this.bluetoothFactory.getBluetoothLeScanner() == null)
+        // reattach the BluetoothAdapter
+        if (!this.bluetoothFactory.canAttachBluetoothAdapter())
         {
-            try
-            {
-                this.bluetoothFactory.createBluetoothLeScanner();
-            }
-            catch (final SecurityException securityException)
-            {
-                canScan = false;
+            canScan = false;
 
-                if (this.callback != null)
-                {
-                    this.callback.monitoringDidFail(Error.NO_BLUETOOTH_PERMISSION);
-                }
+            if (this.callback != null)
+            {
+                this.callback.monitoringDidFail(Error.NO_BLUETOOTH_PERMISSION);
             }
         }
-
-        if (this.bluetoothFactory.getBluetoothLeScanner() != null)
+        else
         {
             if (!BluetoothUtils.hasBluetoothLE(this.context))
             {
@@ -191,7 +182,7 @@ final class DefaultScanService implements ScanService, TimeoutHandler.TimeoutCal
             }
         }
 
-        if (canScan)
+        if (canScan && this.bluetoothFactory.getBluetoothLeScanner() != null)
         {
             // stop scanning
             this.bluetoothFactory.getBluetoothLeScanner().stopScan(DefaultScanService.this.scannerScanCallback);
@@ -286,7 +277,7 @@ final class DefaultScanService implements ScanService, TimeoutHandler.TimeoutCal
         }
 
         /**
-         * Additionaly you can set a {@link BluetoothFactory} responsible for creating a {@link android.bluetooth.le.BluetoothLeScanner}.
+         * Additionally you can set a {@link BluetoothFactory} responsible for creating a {@link android.bluetooth.le.BluetoothLeScanner}.
          *
          * @param bluetoothFactory to use
          * @return {@link DefaultScanService.Initializer}

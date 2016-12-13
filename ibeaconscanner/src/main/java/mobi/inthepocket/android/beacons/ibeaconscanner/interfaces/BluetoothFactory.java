@@ -1,8 +1,10 @@
 package mobi.inthepocket.android.beacons.ibeaconscanner.interfaces;
 
 import android.annotation.TargetApi;
+import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.os.Build;
+import android.support.annotation.Nullable;
 
 /**
  * BluetoothFactory is responsible for managing the {@link BluetoothLeScanner} used.
@@ -12,12 +14,15 @@ import android.os.Build;
 public interface BluetoothFactory
 {
     /**
-     * Create a {@link BluetoothLeScanner}. Throws a {@link SecurityException} when the bluetooth permission is not granted.
+     * Attaches the {@link BluetoothAdapter} if it is null.
+     *
+     * @return true if the {@link BluetoothAdapter} and {@link BluetoothLeScanner} are available
      */
-    void createBluetoothLeScanner();
+    boolean canAttachBluetoothAdapter();
 
     /**
      * @return a {@link BluetoothLeScanner}
      */
+    @Nullable
     BluetoothLeScanner getBluetoothLeScanner();
 }

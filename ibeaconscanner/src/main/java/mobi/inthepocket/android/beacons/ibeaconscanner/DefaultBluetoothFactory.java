@@ -15,20 +15,42 @@ import mobi.inthepocket.android.beacons.ibeaconscanner.interfaces.BluetoothFacto
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class DefaultBluetoothFactory implements BluetoothFactory
 {
-    private BluetoothLeScanner bluetoothLeScanner;
+    private BluetoothAdapter bluetoothAdapter;
 
     /**
-     * Creates the {@link #bluetoothLeScanner} if it is null. Throws a {@link SecurityException} when the bluetooth permission is not granted.
+     * Attaches the {@link #bluetoothAdapter} if it is null.
+     *
+     * @return true if the {@link BluetoothAdapter} and {@link BluetoothLeScanner} are available
      */
     @Override
-    public void createBluetoothLeScanner()
+    public boolean canAttachBluetoothAdapter()
     {
-        if (this.bluetoothLeScanner == null)
+        // try to get the BluetoothAdapter
+        // apps running in a Samsung Knox container will crash with a SecurityException
+        if (this.bluetoothAdapter == null)
         {
-
-            final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-            this.bluetoothLeScanner = bluetoothAdapter.getBluetoothLeScanner();
+            try
+            {
+                this.bluetoothAdapter = this.getBluetoothAdapter();
+            }
+            catch (final SecurityException securityException)
+            {
+                return false;
+            }
         }
+
+        // try to get the BluetoothLeScanner
+        // apps without Bluetooth permission will crash with a SecurityException
+        try
+        {
+            this.bluetoothAdapter.getBluetoothLeScanner();
+        }
+        catch (final SecurityException securityException)
+        {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -38,6 +60,14 @@ public class DefaultBluetoothFactory implements BluetoothFactory
     @Nullable
     public BluetoothLeScanner getBluetoothLeScanner()
     {
-        return this.bluetoothLeScanner;
+        return this.canAttachBluetoothAdapter() ? this.bluetoothAdapter.getBluetoothLeScanner() : null;
+    }
+
+    /**
+     * @return {@link BluetoothAdapter#getDefaultAdapter()}
+     */
+    public BluetoothAdapter getBluetoothAdapter()
+    {
+        return BluetoothAdapter.getDefaultAdapter();
     }
 }
