@@ -22,13 +22,13 @@
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/textinputlayout_uuid"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:hint="@string/uuid">
 
-                <EditText
+                <android.support.design.widget.TextInputEditText
                     android:id="@+id/edittext_uuid"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/uuid"
                     android:inputType="text"
                     android:text="@string/beacon_uuid"/>
 
@@ -37,13 +37,13 @@
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/textinputlayout_major"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:hint="@string/major">
 
-                <EditText
+                <android.support.design.widget.TextInputEditText
                     android:id="@+id/edittext_major"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/major"
                     android:inputType="number"
                     android:text="@string/beacon_major"/>
 
@@ -52,13 +52,13 @@
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/textinputlayout_minor"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:hint="@string/minor">
 
-                <EditText
+                <android.support.design.widget.TextInputEditText
                     android:id="@+id/edittext_minor"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/minor"
                     android:inputType="number"
                     android:text="@string/beacon_minor"/>
 

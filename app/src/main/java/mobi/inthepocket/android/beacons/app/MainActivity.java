@@ -2,12 +2,12 @@ package mobi.inthepocket.android.beacons.app;
 
 import android.Manifest;
 import android.os.Bundle;
+import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputFilter;
 import android.text.TextUtils;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,15 +30,15 @@ public class MainActivity extends AppCompatActivity implements IBeaconScanner.Ca
     @BindView(R.id.textinputlayout_uuid)
     TextInputLayout textInputLayoutUuid;
     @BindView(R.id.edittext_uuid)
-    EditText editTextUuid;
+    TextInputEditText editTextUuid;
     @BindView(R.id.textinputlayout_major)
     TextInputLayout textInputLayoutMajor;
     @BindView(R.id.edittext_major)
-    EditText editTextMajor;
+    TextInputEditText editTextMajor;
     @BindView(R.id.textinputlayout_minor)
     TextInputLayout textInputLayoutMinor;
     @BindView(R.id.edittext_minor)
-    EditText editTextMinor;
+    TextInputEditText editTextMinor;
     @BindView(R.id.button_start)
     Button buttonStartScanning;
     @BindView(R.id.button_stop)
