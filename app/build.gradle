@@ -19,12 +19,12 @@ android {
     buildToolsVersion "25.0.1"
 
     defaultConfig {
-        applicationId "mobi.inthepocket.android.beacons.app"
+        applicationId appApplicationId
         minSdkVersion 11
         targetSdkVersion 25
         versionCode 1
         versionName "1"
-        testInstrumentationRunner "mobi.inthepocket.android.beacons.app.TestRunner"
+        testInstrumentationRunner appTestRunner
     }
 
     buildTypes {

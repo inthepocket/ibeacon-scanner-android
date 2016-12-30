@@ -23,6 +23,6 @@ allprojects {
 
 sonarqube {
     properties {
-        property "sonar.projectVersion", projectVersion
+        property "sonar.projectVersion", projectVersionName
     }
 }
