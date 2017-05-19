@@ -19,7 +19,7 @@ By adding the dependency in your module level build.gradle:
 
 ```gradle
 dependencies {
-    compile 'mobi.inthepocket.android:ibeaconscanner:1.3.0'
+    compile 'mobi.inthepocket.android:ibeaconscanner:1.2.2'
 }
 ```
 
