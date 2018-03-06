@@ -15,15 +15,15 @@ if (System.env.TRAVIS == 'true') {
 }
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.1"
+    compileSdkVersion 27
+    buildToolsVersion "27.0.3"
 
     defaultConfig {
         applicationId appApplicationId
-        minSdkVersion 11
-        targetSdkVersion 25
-        versionCode 1
-        versionName "1"
+        minSdkVersion 18
+        targetSdkVersion 27
+        versionCode 2
+        versionName "2"
         testInstrumentationRunner appTestRunner
     }
 
