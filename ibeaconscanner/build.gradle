@@ -29,12 +29,12 @@ if (System.env.TRAVIS == 'true') {
 }
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.1"
+    compileSdkVersion 27
+    buildToolsVersion "27.0.3"
 
     defaultConfig {
-        minSdkVersion 11
-        targetSdkVersion 25
+        minSdkVersion 18
+        targetSdkVersion 27
         versionCode projectVersionCodeNr
         versionName projectVersionName
         consumerProguardFiles 'proguard-rules.pro'
@@ -64,7 +64,7 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:support-annotations:25.0.1'
+    compile 'com.android.support:support-annotations:27.0.2'
 
     testCompile 'junit:junit:4.12'
     testCompile 'org.robolectric:robolectric:3.1.4'
