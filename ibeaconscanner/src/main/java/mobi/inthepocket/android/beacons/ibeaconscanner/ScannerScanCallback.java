@@ -9,18 +9,17 @@ import android.os.Build;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.util.Pair;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 import mobi.inthepocket.android.beacons.ibeaconscanner.database.BeaconSeen;
 import mobi.inthepocket.android.beacons.ibeaconscanner.database.BeaconsSeenProvider;
 import mobi.inthepocket.android.beacons.ibeaconscanner.database.BeaconsSeenTable;
 import mobi.inthepocket.android.beacons.ibeaconscanner.handlers.OnExitHandler;
 import mobi.inthepocket.android.beacons.ibeaconscanner.handlers.TimeoutHandler;
-import mobi.inthepocket.android.beacons.ibeaconscanner.utils.ConversionUtils;
+import mobi.inthepocket.android.beacons.ibeaconscanner.utils.BeaconUtils;
 
 /**
  * Created by eliaslecomte on 28/09/2016.
@@ -79,40 +78,11 @@ public class ScannerScanCallback extends ScanCallback implements TimeoutHandler.
         // get Scan Record byte array (Be warned, this can be null)
         if (scanResult.getScanRecord() != null)
         {
-            final byte[] scanRecord = scanResult.getScanRecord().getBytes();
+            final Pair<Boolean, Integer> isBeacon = BeaconUtils.isBeaconPattern(scanResult);
 
-            int startByte = 2;
-            boolean patternFound = false;
-            while (startByte <= 5)
+            if (isBeacon.first)
             {
-                if (((int) scanRecord[startByte + 2] & 0xff) == 0x02 && // identifies an iBeacon
-                        ((int) scanRecord[startByte + 3] & 0xff) == 0x15)
-                {
-                    // identifies correct data length
-                    patternFound = true;
-                    break;
-                }
-                startByte++;
-            }
-
-            if (patternFound)
-            {
-                // get the UUID from the hex result
-                final byte[] uuidBytes = new byte[16];
-                System.arraycopy(scanRecord, startByte + 4, uuidBytes, 0, 16);
-                final UUID uuid = ConversionUtils.bytesToUuid(uuidBytes);
-
-                // get the major from hex result
-                final int major = ConversionUtils.byteArrayToInteger(Arrays.copyOfRange(scanRecord, startByte + 20, startByte + 22));
-
-                // get the minor from hex result
-                final int minor = ConversionUtils.byteArrayToInteger(Arrays.copyOfRange(scanRecord, startByte + 22, startByte + 24));
-
-                final Beacon beacon = Beacon.newBuilder()
-                        .setUUID(uuid)
-                        .setMajor(major)
-                        .setMinor(minor)
-                        .build();
+                final Beacon beacon = BeaconUtils.createBeaconFromScanRecord(scanResult.getScanRecord().getBytes(), isBeacon.second);
 
                 // see if the beacon was not yet triggered
                 final Uri uri = getItemUri(beacon);
