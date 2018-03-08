@@ -2,7 +2,9 @@ package mobi.inthepocket.android.beacons.ibeaconscanner.utils;
 
 import android.annotation.TargetApi;
 import android.bluetooth.le.ScanResult;
+import android.net.Uri;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.util.Pair;
 
 import java.util.Arrays;
@@ -71,5 +73,20 @@ public final class BeaconUtils
                 .setMajor(major)
                 .setMinor(minor)
                 .build();
+    }
+
+    /**
+     * Get a {@link Uri} that points to a beacon a content provider.
+     *
+     * @param contentUri source URI for the content provider pointing to single items
+     * @param beacon beacon to search in the content repo
+     * @return URI to look up the beacon in the content provider.
+     * Format: {contentUri}/UUID/major/minor
+     */
+    public static Uri getItemUri(@NonNull final Uri contentUri, @NonNull final Beacon beacon)
+    {
+        return Uri.withAppendedPath(contentUri, beacon.getUUID().toString()
+                + "/" + beacon.getMajor()
+                + "/" + beacon.getMinor());
     }
 }
