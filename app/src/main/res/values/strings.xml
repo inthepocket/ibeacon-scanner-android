@@ -8,6 +8,7 @@
     <string name="start">Start scanning</string>
     <string name="stop">Stop</string>
     <string name="log_title">Log</string>
+    <string name="log_content">Logs will appear in the notification shade for demonstration purposes.</string>
     <string name="uuid_error">Uuid is not correct.</string>
     <string name="major_error">Major is not correct. Has to be a number between 1 &#8211; 65535.</string>
     <string name="minor_error">Major is not correct. Has to be a number between 1 &#8211; 65535.</string>

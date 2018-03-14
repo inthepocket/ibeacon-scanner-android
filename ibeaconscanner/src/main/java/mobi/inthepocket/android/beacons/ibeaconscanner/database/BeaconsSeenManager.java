@@ -17,8 +17,8 @@ import mobi.inthepocket.android.beacons.ibeaconscanner.utils.BeaconUtils;
  */
 public class BeaconsSeenManager
 {
-    private BeaconsSeenProvider beaconsSeenProvider;
-    private long beaconExitTimeoutInMillis;
+    private final BeaconsSeenProvider beaconsSeenProvider;
+    private final long beaconExitTimeoutInMillis;
 
     /**
      * Creates a new BeaconsSeenManager.
@@ -40,28 +40,37 @@ public class BeaconsSeenManager
      */
     public boolean hasBeaconBeenTriggered(final Beacon beacon)
     {
-        final Uri uri = BeaconUtils.getItemUri(BeaconsSeenProvider.CONTENT_URI_ITEM, beacon);
-        final Cursor cursor = this.beaconsSeenProvider.query(uri);
-        if (cursor != null)
+        final Uri uri = BeaconUtils.getItemUri(beacon);
+        Cursor cursor = null;
+        try
         {
-            final List<BeaconSeen> beaconSeens = new ArrayList<>();
-            if (cursor.moveToFirst())
+            cursor = this.beaconsSeenProvider.query(uri);
+            if (cursor != null)
             {
-                do
+                final List<BeaconSeen> beaconSeens = new ArrayList<>();
+                if (cursor.moveToFirst())
                 {
-                    final BeaconSeen beaconSeen = new BeaconSeen();
-                    beaconSeen.constructFromCursor(cursor);
-                    beaconSeens.add(beaconSeen);
+                    do
+                    {
+                        final BeaconSeen beaconSeen = new BeaconSeen();
+                        beaconSeen.constructFromCursor(cursor);
+                        beaconSeens.add(beaconSeen);
+                    }
+                    while (cursor.moveToNext());
                 }
-                while (cursor.moveToNext());
+
+                if (beaconSeens.isEmpty())
+                {
+                    // this beacon is not yet in our database
+                    return false;
+                }
             }
-
-            cursor.close();
-
-            if (beaconSeens.isEmpty())
+        }
+        finally
+        {
+            if (cursor != null)
             {
-                // this beacon is not yet in our database
-                return false;
+                cursor.close();
             }
         }
 
@@ -75,8 +84,45 @@ public class BeaconsSeenManager
      */
     public void addBeaconToDatabase(@NonNull final Beacon beacon)
     {
-        final Uri uri = BeaconUtils.getItemUri(BeaconsSeenProvider.CONTENT_URI_ITEM, beacon);
+        final Uri uri = BeaconUtils.getItemUri(beacon);
         this.beaconsSeenProvider.insert(uri, BeaconSeen.getContentValues(beacon, SystemClock.elapsedRealtime()));
+    }
+
+    /**
+     * Finds a single beacon in the database based on its UUID, major and minor values.
+     *
+     * @param uuid  UUID of the desired beacon
+     * @param major major value of the desired beacon
+     * @param minor minor value of the desired beacon
+     * @return {@link Beacon} that has been located in the database, or null if not found.
+     */
+    public Beacon getBeaconFromDatabase(@NonNull final String uuid, final int major, final int minor)
+    {
+        Beacon beacon = null;
+        final Uri uri = BeaconUtils.getItemUri(uuid, major, minor);
+        Cursor cursor = null;
+        try
+        {
+            cursor = this.beaconsSeenProvider.query(uri);
+            if (cursor != null && cursor.moveToFirst())
+            {
+                final BeaconSeen beaconSeen = new BeaconSeen();
+                beaconSeen.constructFromCursor(cursor);
+                beacon = Beacon.newBuilder()
+                        .setUUID(beaconSeen.getUuid())
+                        .setMajor(beaconSeen.getMajor())
+                        .setMinor(beaconSeen.getMinor())
+                        .build();
+            }
+        }
+        finally
+        {
+            if (cursor != null)
+            {
+                cursor.close();
+            }
+        }
+        return beacon;
     }
 
     /**
@@ -86,7 +132,7 @@ public class BeaconsSeenManager
      */
     public void removeBeaconFromDatabase(@NonNull final Beacon beacon)
     {
-        this.beaconsSeenProvider.delete(BeaconUtils.getItemUri(BeaconsSeenProvider.CONTENT_URI_ITEM, beacon));
+        this.beaconsSeenProvider.delete(BeaconUtils.getItemUri(beacon));
     }
 
     /**
@@ -108,10 +154,11 @@ public class BeaconsSeenManager
     public List<BeaconSeen> fetchPresentBeacons()
     {
         final List<BeaconSeen> beaconSeens = new ArrayList<>();
-        final Cursor cursor = this.beaconsSeenProvider.query(BeaconsSeenProvider.CONTENT_URI);
-        if (cursor != null)
+        Cursor cursor = null;
+        try
         {
-            if (cursor.moveToFirst())
+            cursor = this.beaconsSeenProvider.query(BeaconsSeenProvider.CONTENT_URI);
+            if (cursor != null && cursor.moveToFirst())
             {
                 do
                 {
@@ -121,8 +168,13 @@ public class BeaconsSeenManager
                 }
                 while (cursor.moveToNext());
             }
-
-            cursor.close();
+        }
+        finally
+        {
+            if (cursor != null)
+            {
+                cursor.close();
+            }
         }
         return beaconSeens;
     }

@@ -2,12 +2,15 @@ package mobi.inthepocket.android.beacons.ibeaconscanner;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.PendingIntent;
 import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanSettings;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresPermission;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -35,6 +38,8 @@ final class DefaultScanService implements ScanService, TimeoutHandler.TimeoutCal
     private final Context context;
     private final BluetoothFactory bluetoothFactory;
     private final ScannerScanCallback scannerScanCallback;
+    private final PendingIntent scannerPendingIntent;
+    private final BeaconsSeenProvider beaconsSeenProvider;
 
     private IBeaconScanner.Callback callback;
 
@@ -44,10 +49,10 @@ final class DefaultScanService implements ScanService, TimeoutHandler.TimeoutCal
 
     private DefaultScanService(@NonNull final Initializer initializer)
     {
-        final BeaconsSeenProvider beaconsSeenProvider = new BeaconsSeenProvider(initializer.context);
-
         this.context = initializer.context;
-        this.scannerScanCallback = new ScannerScanCallback(beaconsSeenProvider, initializer.exitTimeoutInMillis);
+        this.beaconsSeenProvider = new BeaconsSeenProvider(initializer.context);
+        this.scannerScanCallback = new ScannerScanCallback(this.beaconsSeenProvider, initializer.exitTimeoutInMillis);
+        this.scannerPendingIntent = this.createOreoScanCallbackIntent(initializer.targetService, initializer.exitTimeoutInMillis);
 
         this.bluetoothFactory = initializer.bluetoothFactory;
 
@@ -83,6 +88,7 @@ final class DefaultScanService implements ScanService, TimeoutHandler.TimeoutCal
     {
         this.beacons.remove(beacon);
         this.addBeaconsHandler.passItem(this.timeoutObject);
+        this.beaconsSeenProvider.destroy();
     }
 
     /**
@@ -185,7 +191,14 @@ final class DefaultScanService implements ScanService, TimeoutHandler.TimeoutCal
         if (canScan && this.bluetoothFactory.getBluetoothLeScanner() != null)
         {
             // stop scanning
-            this.bluetoothFactory.getBluetoothLeScanner().stopScan(DefaultScanService.this.scannerScanCallback);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            {
+                this.bluetoothFactory.getBluetoothLeScanner().stopScan(this.scannerPendingIntent);
+            }
+            else
+            {
+                this.bluetoothFactory.getBluetoothLeScanner().stopScan(this.scannerScanCallback);
+            }
 
             // start scanning
             if (!this.beacons.isEmpty())
@@ -197,7 +210,18 @@ final class DefaultScanService implements ScanService, TimeoutHandler.TimeoutCal
                     scanFilters.add(ScanFilterUtils.getScanFilter(beacon));
                 }
 
-                this.bluetoothFactory.getBluetoothLeScanner().startScan(scanFilters, getScanSettings(), this.scannerScanCallback);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                {
+                    final int result = this.bluetoothFactory.getBluetoothLeScanner().startScan(scanFilters, getScanSettings(), this.scannerPendingIntent);
+                    if (result != 0)
+                    {
+                        Log.e("DefaultScanService", "Failed to start background scan on Android O. Code: " + result);
+                    }
+                }
+                else
+                {
+                    this.bluetoothFactory.getBluetoothLeScanner().startScan(scanFilters, getScanSettings(), this.scannerScanCallback);
+                }
             }
         }
     }
@@ -218,6 +242,21 @@ final class DefaultScanService implements ScanService, TimeoutHandler.TimeoutCal
     //endregion
 
     //region Helpers
+
+    /**
+     * Low power scan results in the background will be delivered via a PendingIntent.
+     *
+     * @param targetService       target service to launch when beacons have been entered or exited
+     * @param exitTimeoutInMillis beacon exit timeout in ms
+     */
+    @TargetApi(Build.VERSION_CODES.O)
+    private PendingIntent createOreoScanCallbackIntent(final Class<?> targetService, final long exitTimeoutInMillis)
+    {
+        final Intent intent = new Intent(this.context, BluetoothScanBroadcastReceiver.class);
+        intent.putExtra(BluetoothScanBroadcastReceiver.IBEACON_SCAN_LAUNCH_SERVICE_CLASS_NAME, targetService.getName());
+        intent.putExtra(BluetoothScanBroadcastReceiver.IBEACON_SCAN_EXITED_TIMEOUT_MS, exitTimeoutInMillis);
+        return PendingIntent.getBroadcast(this.context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+    }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private static ScanSettings getScanSettings()
@@ -241,6 +280,7 @@ final class DefaultScanService implements ScanService, TimeoutHandler.TimeoutCal
         private long exitTimeoutInMillis;
         private long addBeaconTimeoutInMillis;
         private BluetoothFactory bluetoothFactory;
+        private Class<?> targetService;
 
         private Initializer(@NonNull final Context context)
         {
@@ -290,11 +330,25 @@ final class DefaultScanService implements ScanService, TimeoutHandler.TimeoutCal
         }
 
         /**
+         * Define the service to launch on Android O and later when a beacon update needs to be communicated.
+         * Required for {@link Build.VERSION_CODES#O} and later.
+         *
+         * @param targetService to launch
+         */
+        public Initializer setTargetService(final Class<?> targetService)
+        {
+            this.targetService = targetService;
+
+            return this;
+        }
+
+        /**
          * Returns the {@link DefaultScanService.Initializer} and validates if the configuration is valid and sets default values.
          *
+         * @throws IllegalArgumentException when no target service has been declared for implementations running on {@link Build.VERSION_CODES#O} and later.
          * @return {@link DefaultScanService.Initializer}
          */
-        public DefaultScanService build()
+        public DefaultScanService build() throws IllegalArgumentException
         {
             if (this.exitTimeoutInMillis == 0)
             {
@@ -309,6 +363,11 @@ final class DefaultScanService implements ScanService, TimeoutHandler.TimeoutCal
             if (this.bluetoothFactory == null)
             {
                 this.bluetoothFactory = new DefaultBluetoothFactory();
+            }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && this.targetService == null)
+            {
+                throw new IllegalArgumentException("You need to define a target service for the iBeaconScanner library to publish beacon activity to.");
             }
 
             return new DefaultScanService(this);

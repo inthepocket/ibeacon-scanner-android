@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.UUID;
 
 import mobi.inthepocket.android.beacons.ibeaconscanner.Beacon;
+import mobi.inthepocket.android.beacons.ibeaconscanner.database.BeaconsSeenProvider;
 
 /**
  * Utility class with beacon management functions.
@@ -76,17 +77,32 @@ public final class BeaconUtils
     }
 
     /**
-     * Get a {@link Uri} that points to a beacon a content provider.
+     * Get a {@link Uri} that points to a beacon.
+     * To be used in {@link BeaconsSeenProvider}.
      *
-     * @param contentUri source URI for the content provider pointing to single items
-     * @param beacon beacon to search in the content repo
+     * @param beacon     beacon to search in the content repo
      * @return URI to look up the beacon in the content provider.
      * Format: {contentUri}/UUID/major/minor
      */
-    public static Uri getItemUri(@NonNull final Uri contentUri, @NonNull final Beacon beacon)
+    public static Uri getItemUri(@NonNull final Beacon beacon)
     {
-        return Uri.withAppendedPath(contentUri, beacon.getUUID().toString()
+        return Uri.withAppendedPath(BeaconsSeenProvider.CONTENT_URI_ITEM, beacon.getUUID().toString()
                 + "/" + beacon.getMajor()
                 + "/" + beacon.getMinor());
+    }
+
+    /**
+     * Get a {@link Uri} that points to a beacon.
+     * To be used in {@link BeaconsSeenProvider}.
+     *
+     * @param uuid    UUID of the beacon to search in the content repo
+     * @param major   major value of the beacon
+     * @param minor   minor value of the beacon
+     * @return URI to look up the beacon in the content provider.
+     * Format: {contentUri}/UUID/major/minor
+     */
+    public static Uri getItemUri(@NonNull final String uuid, final int major, final int minor)
+    {
+        return Uri.withAppendedPath(BeaconsSeenProvider.CONTENT_URI_ITEM, uuid + "/" + major + "/" + minor);
     }
 }

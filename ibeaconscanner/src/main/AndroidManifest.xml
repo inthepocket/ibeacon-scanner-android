@@ -9,6 +9,20 @@
     <application
         android:label="@string/app_name">
 
+        <receiver
+            android:name=".BluetoothScanBroadcastReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.ACTION_POWER_CONNECTED"/>
+                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED"/>
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:exported="false"
+            android:name=".OnExitJobService"/>
+
     </application>
 
 </manifest>
