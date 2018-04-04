@@ -36,8 +36,9 @@ import mobi.inthepocket.android.beacons.ibeaconscanner.utils.ScanFilterUtils;
 final class DefaultScanService implements ScanService, TimeoutHandler.TimeoutCallback<Object>
 {
     private final Context context;
+
     private final BluetoothFactory bluetoothFactory;
-    private final ScannerScanCallback scannerScanCallback;
+    private final BackportScanCallback backportScanCallback;
     private final PendingIntent scannerPendingIntent;
     private final BeaconsSeenProvider beaconsSeenProvider;
 
@@ -51,7 +52,7 @@ final class DefaultScanService implements ScanService, TimeoutHandler.TimeoutCal
     {
         this.context = initializer.context;
         this.beaconsSeenProvider = new BeaconsSeenProvider(initializer.context);
-        this.scannerScanCallback = new ScannerScanCallback(this.beaconsSeenProvider, initializer.exitTimeoutInMillis);
+        this.backportScanCallback = new BackportScanCallback(initializer.context, initializer.targetService, initializer.exitTimeoutInMillis);
         this.scannerPendingIntent = this.createOreoScanCallbackIntent(initializer.targetService, initializer.exitTimeoutInMillis);
 
         this.bluetoothFactory = initializer.bluetoothFactory;
@@ -119,7 +120,6 @@ final class DefaultScanService implements ScanService, TimeoutHandler.TimeoutCal
     public void setCallback(@NonNull final IBeaconScanner.Callback callback)
     {
         this.callback = callback;
-        this.scannerScanCallback.setCallback(callback);
     }
 
     //endregion
@@ -197,7 +197,7 @@ final class DefaultScanService implements ScanService, TimeoutHandler.TimeoutCal
             }
             else
             {
-                this.bluetoothFactory.getBluetoothLeScanner().stopScan(this.scannerScanCallback);
+                this.bluetoothFactory.getBluetoothLeScanner().stopScan(this.backportScanCallback);
             }
 
             // start scanning
@@ -220,7 +220,7 @@ final class DefaultScanService implements ScanService, TimeoutHandler.TimeoutCal
                 }
                 else
                 {
-                    this.bluetoothFactory.getBluetoothLeScanner().startScan(scanFilters, getScanSettings(), this.scannerScanCallback);
+                    this.bluetoothFactory.getBluetoothLeScanner().startScan(scanFilters, getScanSettings(), this.backportScanCallback);
                 }
             }
         }

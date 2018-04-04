@@ -18,8 +18,6 @@ import com.firebase.jobdispatcher.GooglePlayDriver;
 import com.firebase.jobdispatcher.Lifetime;
 import com.firebase.jobdispatcher.Trigger;
 
-import java.util.ArrayList;
-
 import mobi.inthepocket.android.beacons.ibeaconscanner.database.BeaconsSeenManager;
 import mobi.inthepocket.android.beacons.ibeaconscanner.database.BeaconsSeenProvider;
 import mobi.inthepocket.android.beacons.ibeaconscanner.utils.BeaconUtils;
@@ -27,10 +25,23 @@ import mobi.inthepocket.android.beacons.ibeaconscanner.utils.BeaconUtils;
 /**
  * Receives and processes the result of a bluetooth scan.
  */
-@TargetApi(Build.VERSION_CODES.O)
+@TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class BluetoothScanBroadcastReceiver extends BroadcastReceiver
 {
     private static final int JOB_ID = 9859;
+
+    /**
+     * Backport of {@link BluetoothLeScanner#EXTRA_CALLBACK_TYPE}
+     */
+    public static final String CALLBACK_TYPE = "android.bluetooth.le.extra.CALLBACK_TYPE";
+    /**
+     * Backport of {@link BluetoothLeScanner#EXTRA_LIST_SCAN_RESULT}
+     */
+    public static final String LIST_SCAN_RESULT = "android.bluetooth.le.extra.LIST_SCAN_RESULT";
+    /**
+     * Backport of {@link BluetoothLeScanner#EXTRA_ERROR_CODE}
+     */
+    public static final String ERROR_CODE = "android.bluetooth.le.extra.ERROR_CODE";
 
     /**
      * {@link JobIntentService} class to post the beacons found to.
@@ -81,15 +92,15 @@ public class BluetoothScanBroadcastReceiver extends BroadcastReceiver
             Log.e(TAG, "Target class was not found. Ensure you're passing the fully qualified namespace.", e);
         }
 
-        final int bleCallbackType = intent.getIntExtra(BluetoothLeScanner.EXTRA_CALLBACK_TYPE, -1);
+        final int bleCallbackType = intent.getIntExtra(this.getCallbackIntentKey(), -1);
         if (bleCallbackType != -1)
         {
-            final int errorCode = intent.getIntExtra(BluetoothLeScanner.EXTRA_ERROR_CODE, -1); // e.g.  ScanCallback.SCAN_FAILED_INTERNAL_ERROR
+            final int errorCode = intent.getIntExtra(this.getErrorCodeIntentKey(), -1); // e.g.  ScanCallback.SCAN_FAILED_INTERNAL_ERROR
             if (errorCode != -1)
             {
                 Log.w(TAG, "Passive background scan failed.  Code; " + errorCode);
             }
-            final ArrayList<ScanResult> scanResults = intent.getParcelableArrayListExtra(BluetoothLeScanner.EXTRA_LIST_SCAN_RESULT);
+            final Iterable<ScanResult> scanResults = intent.getParcelableArrayListExtra(this.getListScanResultIntentKey());
             for (final ScanResult scanResult : scanResults)
             {
                 this.processScanResult(scanResult);
@@ -151,4 +162,29 @@ public class BluetoothScanBroadcastReceiver extends BroadcastReceiver
             }
         }
     }
+
+    //region Private helpers
+
+    private String getCallbackIntentKey()
+    {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+                ? BluetoothLeScanner.EXTRA_CALLBACK_TYPE
+                : CALLBACK_TYPE;
+    }
+
+    private String getErrorCodeIntentKey()
+    {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+                ? BluetoothLeScanner.EXTRA_ERROR_CODE
+                : ERROR_CODE;
+    }
+
+    private String getListScanResultIntentKey()
+    {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+                ? BluetoothLeScanner.EXTRA_LIST_SCAN_RESULT
+                : LIST_SCAN_RESULT;
+    }
+
+    //endregion
 }
