@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.JobIntentService;
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.Pair;
 
@@ -73,9 +74,9 @@ public class BluetoothScanBroadcastReceiver extends BroadcastReceiver
         final String className = intent.getStringExtra(IBEACON_SCAN_LAUNCH_SERVICE_CLASS_NAME);
         try
         {
-            this.targetService = Class.forName(className);
+            this.targetService = TextUtils.isEmpty(className) ? null : Class.forName(className);
         }
-        catch (ClassNotFoundException e)
+        catch (final ClassNotFoundException e)
         {
             Log.e(TAG, "Target class was not found. Ensure you're passing the fully qualified namespace.", e);
         }
@@ -115,7 +116,7 @@ public class BluetoothScanBroadcastReceiver extends BroadcastReceiver
                 if (!this.beaconsSeenManager.hasBeaconBeenTriggered(beacon))
                 {
                     // this beacon is not yet in our database, trigger {@link IBeaconScanner.Callback#didEnterBeacon}
-                    if (targetService != null)
+                    if (this.targetService != null)
                     {
                         final Intent targetServiceIntent = new Intent(this.context, this.targetService);
                         targetServiceIntent.putExtra(BluetoothScanBroadcastReceiver.IBEACON_SCAN_BEACON_DETECTION, beacon);

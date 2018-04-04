@@ -91,6 +91,7 @@ public class OnExitJobService extends JobService
                         if (targetService != null)
                         {
                             final Intent targetServiceIntent = new Intent(getApplicationContext(), targetService);
+                            targetServiceIntent.putExtra(BluetoothScanBroadcastReceiver.IBEACON_SCAN_LAUNCH_SERVICE_CLASS_NAME, targetService.getName());
                             targetServiceIntent.putExtra(BluetoothScanBroadcastReceiver.IBEACON_SCAN_BEACON_DETECTION, beacon);
                             targetServiceIntent.putExtra(BluetoothScanBroadcastReceiver.IBEACON_SCAN_BEACON_EXITED, true);
                             JobIntentService.enqueueWork(getApplicationContext(), targetService, JOB_ID, targetServiceIntent);
