@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity
         this.editTextMinor.setFilters(new InputFilter[]{new InputFilterMinMax(1, 65535)});
 
         RxPermissions.getInstance(this)
-                .request(Manifest.permission.ACCESS_FINE_LOCATION)
+                .request(Manifest.permission.ACCESS_COARSE_LOCATION)
                 .subscribe(new RxObserver<Boolean>()
                 {
                     @Override
