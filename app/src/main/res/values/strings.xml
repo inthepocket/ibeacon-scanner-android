@@ -13,6 +13,9 @@
     <string name="major_error">Major is not correct. Has to be a number between 1 &#8211; 65535.</string>
     <string name="minor_error">Major is not correct. Has to be a number between 1 &#8211; 65535.</string>
 
+    <string name="notification_enter">Entered beacon with UUID %1$s and major %2$d and minor %3$d.</string>
+    <string name="notification_exit">Exited beacon with UUID %1$s and major %2$d and minor %3$d.</string>
+
     <!-- Default values for beacon input -->
     <string name="beacon_uuid" tools:ignore="TypographyDashes">00000000-0000-0000-0000-000000000001</string>
     <string name="beacon_major">1</string>

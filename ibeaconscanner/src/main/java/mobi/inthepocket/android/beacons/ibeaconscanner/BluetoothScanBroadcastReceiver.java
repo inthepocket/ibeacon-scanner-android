@@ -135,30 +135,25 @@ public class BluetoothScanBroadcastReceiver extends BroadcastReceiver
                         JobIntentService.enqueueWork(this.context, this.targetService, JOB_ID, targetServiceIntent);
                         Log.d(TAG, "Target service notified about beacon enter " + beacon.getUUID());
                     }
-
-                    // add the enter beacon to database
-                    this.beaconsSeenManager.addBeaconToDatabase(beacon);
-
-                    // schedule beacon timeout
-                    Log.d(TAG, "Beacon triggered, scheduled exit JobService");
-                    final int windowStart = (int) (this.beaconExitTimeoutInMillis / 1000L);
-                    final Bundle extras = OnExitJobService.buildExtras(beacon, this.beaconExitTimeoutInMillis, this.targetService);
-
-                    this.dispatcher.mustSchedule(this.dispatcher.newJobBuilder()
-                            .setExtras(extras)
-                            .setLifetime(Lifetime.FOREVER)
-                            .setService(OnExitJobService.class)
-                            .setRecurring(false)
-                            .setReplaceCurrent(true)
-                            .setTag(beacon.getUUID().toString())
-                            .setTrigger(Trigger.executionWindow(windowStart, windowStart + 1))
-                            .build());
-
                 }
-                else
-                {
-                    Log.d(TAG, "beacon not triggered");
-                }
+
+                // add the enter beacon to database
+                this.beaconsSeenManager.addBeaconToDatabase(beacon);
+
+                // schedule beacon timeout
+                Log.d(TAG, "Beacon triggered, scheduled exit JobService");
+                final int windowStart = (int) (this.beaconExitTimeoutInMillis / 1000L);
+                final Bundle extras = OnExitJobService.buildExtras(beacon, this.beaconExitTimeoutInMillis, this.targetService);
+
+                this.dispatcher.mustSchedule(this.dispatcher.newJobBuilder()
+                        .setExtras(extras)
+                        .setLifetime(Lifetime.FOREVER)
+                        .setService(OnExitJobService.class)
+                        .setRecurring(false)
+                        .setReplaceCurrent(true)
+                        .setTag(beacon.getUUID().toString())
+                        .setTrigger(Trigger.executionWindow(windowStart, windowStart + 1))
+                        .build());
             }
         }
     }

@@ -42,12 +42,12 @@ public class BeaconActivityService extends JobIntentService
             if (enteredBeacon)
             {
                 Log.d(TAG, "entered beacon " + beacon.getUUID());
-                logMessage = String.format("Entered beacon with UUID %s and major %s and minor %s.", beacon.getUUID(), beacon.getMajor(), beacon.getMinor());
+                logMessage = getString(R.string.notification_enter, beacon.getUUID(), beacon.getMajor(), beacon.getMinor());
             }
             else if (exitedBeacon)
             {
                 Log.d(TAG, "exited beacon " + beacon.getUUID());
-                logMessage = String.format("Exited beacon with UUID %s and major %s and minor %s.", beacon.getUUID(), beacon.getMajor(), beacon.getMinor());
+                logMessage = getString(R.string.notification_exit, beacon.getUUID(), beacon.getMajor(), beacon.getMinor());
             }
 
             // Create notification channel if required
