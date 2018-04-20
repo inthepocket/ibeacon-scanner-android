@@ -35,14 +35,14 @@ import mobi.inthepocket.android.beacons.ibeaconscanner.utils.ScanFilterUtils;
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 final class DefaultScanService implements ScanService, TimeoutHandler.TimeoutCallback<Object>
 {
+    public static final String TAG = DefaultScanService.class.getSimpleName();
     private final Context context;
 
     private final BluetoothFactory bluetoothFactory;
     private final BackportScanCallback backportScanCallback;
     private final PendingIntent scannerPendingIntent;
     private final BeaconsSeenProvider beaconsSeenProvider;
-
-    private IBeaconScanner.Callback callback;
+    private final Class<?> targetService;
 
     private final AddBeaconsHandler addBeaconsHandler;
     private final Object timeoutObject;
@@ -54,6 +54,7 @@ final class DefaultScanService implements ScanService, TimeoutHandler.TimeoutCal
         this.beaconsSeenProvider = new BeaconsSeenProvider(initializer.context);
         this.backportScanCallback = new BackportScanCallback(initializer.context, initializer.targetService, initializer.exitTimeoutInMillis);
         this.scannerPendingIntent = this.createOreoScanCallbackIntent(initializer.targetService, initializer.exitTimeoutInMillis);
+        this.targetService = initializer.targetService;
 
         this.bluetoothFactory = initializer.bluetoothFactory;
 
@@ -113,15 +114,6 @@ final class DefaultScanService implements ScanService, TimeoutHandler.TimeoutCal
         this.addBeaconsHandler.passItem(this.timeoutObject);
     }
 
-    /**
-     * @see ScanService#setCallback(IBeaconScanner.Callback)
-     */
-    @Override
-    public void setCallback(@NonNull final IBeaconScanner.Callback callback)
-    {
-        this.callback = callback;
-    }
-
     //endregion
 
     //region TimeoutHandler.TimeoutCallback<Void>
@@ -140,10 +132,7 @@ final class DefaultScanService implements ScanService, TimeoutHandler.TimeoutCal
         {
             canScan = false;
 
-            if (this.callback != null)
-            {
-                this.callback.monitoringDidFail(Error.NO_BLUETOOTH_PERMISSION);
-            }
+            this.sendErrorIntent(Error.NO_BLUETOOTH_PERMISSION);
         }
         else
         {
@@ -151,20 +140,14 @@ final class DefaultScanService implements ScanService, TimeoutHandler.TimeoutCal
             {
                 canScan = false;
 
-                if (this.callback != null)
-                {
-                    this.callback.monitoringDidFail(Error.NO_BLUETOOTH_LE);
-                }
+                this.sendErrorIntent(Error.NO_BLUETOOTH_LE);
             }
 
             if (!BluetoothUtils.isBluetoothOn())
             {
                 canScan = false;
 
-                if (this.callback != null)
-                {
-                    this.callback.monitoringDidFail(Error.BLUETOOTH_OFF);
-                }
+                this.sendErrorIntent(Error.BLUETOOTH_OFF);
             }
         }
 
@@ -172,20 +155,14 @@ final class DefaultScanService implements ScanService, TimeoutHandler.TimeoutCal
         {
             canScan = false;
 
-            if (this.callback != null)
-            {
-                this.callback.monitoringDidFail(Error.LOCATION_OFF);
-            }
+            this.sendErrorIntent(Error.LOCATION_OFF);
         }
 
         if (!PermissionUtils.isLocationGranted(this.context))
         {
             canScan = false;
 
-            if (this.callback != null)
-            {
-                this.callback.monitoringDidFail(Error.NO_LOCATION_PERMISSION);
-            }
+            this.sendErrorIntent(Error.NO_LOCATION_PERMISSION);
         }
 
         if (canScan && this.bluetoothFactory.getBluetoothLeScanner() != null)
@@ -215,7 +192,7 @@ final class DefaultScanService implements ScanService, TimeoutHandler.TimeoutCal
                     final int result = this.bluetoothFactory.getBluetoothLeScanner().startScan(scanFilters, getScanSettings(), this.scannerPendingIntent);
                     if (result != 0)
                     {
-                        Log.e("DefaultScanService", "Failed to start background scan on Android O. Code: " + result);
+                        Log.e(TAG, "Failed to start background scan on Android O. Code: " + result);
                     }
                 }
                 else
@@ -256,6 +233,21 @@ final class DefaultScanService implements ScanService, TimeoutHandler.TimeoutCal
         intent.putExtra(BluetoothScanBroadcastReceiver.IBEACON_SCAN_LAUNCH_SERVICE_CLASS_NAME, targetService.getName());
         intent.putExtra(BluetoothScanBroadcastReceiver.IBEACON_SCAN_EXITED_TIMEOUT_MS, exitTimeoutInMillis);
         return PendingIntent.getBroadcast(this.context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
+    private void sendErrorIntent(Error error)
+    {
+        final Intent intent = new Intent(this.context, this.targetService);
+        intent.putExtra(BluetoothScanBroadcastReceiver.ERROR_CODE, error);
+        final PendingIntent pendingIntent = PendingIntent.getBroadcast(this.context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        try
+        {
+            pendingIntent.send();
+        }
+        catch (final PendingIntent.CanceledException e)
+        {
+            Log.e(TAG, "Sending Broadcast intent was not possible: " + e.getMessage());
+        }
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
