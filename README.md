@@ -19,34 +19,14 @@ By adding the dependency in your module level build.gradle:
 
 ```gradle
 dependencies {
-    compile 'mobi.inthepocket.android:ibeaconscanner:1.2.2'
+    compile 'mobi.inthepocket.android:ibeaconscanner:2.0.0'
 }
 ```
 
 ## Setup ##
 
-It depends if you want to scan for beacons in a service or in your app how to integrate the library:
-
-### Service ###
-
-```java
-public class MyService extends Service implements IBeaconScanner.Callback
-{
-    @Override
-    public void onCreate()
-    {
-        super.OnCreate();
-
-        // initialize
-        IBeaconScanner.initialize(IBeaconScanner.newInitializer(this).build());
-        IBeaconScanner.getInstance().setCallback(this);
-    }
-}
-```
-
-### Application ###
-
-If you want to scan for beacons in an activity, first initialize the library in your application class:
+If you want to scan for beacons in an activity or service, first initialize the library in your application class:
+You need to set a target service to receive beacon notifications. This API has changed since the introduction of Android 8, we can only start JobIntentServices in the background. All beacon intents will be handled in this JobIntentService.
 
 ```java
 public class MyApplication extends Application
@@ -56,32 +36,35 @@ public class MyApplication extends Application
         super.onCreate();
 
         // initialize
-        IBeaconScanner.initialize(IBeaconScanner.newInitializer(this).build());
+        IBeaconScanner.initialize(IBeaconScanner.newInitializer(this)
+            .setTargetService(BeaconActivityService.class)
+            .build());
     }
 }
 ```
 
 ## Get notified of iBeacon enters and exits ##
 
-### Set Callback ###
-
-You need to set your Callback in your Activity, Fragment or Service, by implementing this interface:
+You need the JobIntentService (described above) to receive beacon enters and exits.
 
 
 ```java
-public interface Callback
+public class BeaconActivityService extends JobIntentService
 {
-    void didEnterBeacon(Beacon beacon);
-
-    void didExitBeacon(Beacon beacon);
-
-    void monitoringDidFail(Error error);
+    protected void onHandleWork(@NonNull final Intent intent)
+    {
+        // This is the beacon object containing UUID, major and minor info
+        final Beacon beacon = intent.getParcelableExtra(BluetoothScanBroadcastReceiver.IBEACON_SCAN_BEACON_DETECTION);
+        
+        // This flag will be true if it is an enter event that triggered this service
+        final boolean enteredBeacon = intent.getBooleanExtra(BluetoothScanBroadcastReceiver.IBEACON_SCAN_BEACON_ENTERED, false);
+        
+        // This flag will be true if it is an exit event that triggered this service
+        final boolean exitedBeacon = intent.getBooleanExtra(BluetoothScanBroadcastReceiver.IBEACON_SCAN_BEACON_EXITED, false);
+        
+        // Here you can do something with the beacon trigger
+    }
 }
-```
-
-
-```
-IBeaconScanner.getInstance().setCallback(this);
 ```
 
 ### Create a Beacon object ###

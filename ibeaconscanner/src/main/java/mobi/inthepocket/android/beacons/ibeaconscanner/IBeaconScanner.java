@@ -92,14 +92,6 @@ public final class IBeaconScanner
         this.scanService.stop();
     }
 
-    /**
-     * @see ScanService#setCallback(Callback)
-     */
-    public void setCallback(@NonNull final Callback callback)
-    {
-        this.scanService.setCallback(callback);
-    }
-
     //endregion
 
     //region Properties
@@ -115,34 +107,4 @@ public final class IBeaconScanner
 
     //endregion
 
-    //region Callback
-
-    /**
-     * Callback object that notifies of {@link Beacon} enter, exits or moinotiring fails.
-     */
-    public interface Callback
-    {
-        /**
-         * Device is inside the range of {@code beacon}.
-         *
-         * @param beacon device is in range of
-         */
-        void didEnterBeacon(Beacon beacon);
-
-        /**
-         * Device is outside the range of {@code beacon}.
-         *
-         * @param beacon device is no longer in range of
-         */
-        void didExitBeacon(Beacon beacon);
-
-        /**
-         * Monitoring could not start due to {@code error}.
-         *
-         * @param error that happened
-         */
-        void monitoringDidFail(Error error);
-    }
-
-    //endregion
 }

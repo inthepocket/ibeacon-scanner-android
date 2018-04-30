@@ -10,6 +10,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import java.util.List;
 
@@ -28,8 +29,9 @@ public class BeaconsSeenProvider
 
     private static final int LIST = 1;
     private static final int ITEM = 2;
+    private static final String TAG = "BeaconsSeenProvider";
 
-    private final SQLiteDatabase database;
+    private SQLiteDatabase database;
 
     static
     {
@@ -46,6 +48,17 @@ public class BeaconsSeenProvider
     {
         final DatabaseHelper databaseHelper = new DatabaseHelper(context);
         this.database = databaseHelper.getWritableDatabase();
+    }
+
+    /**
+     * Close the connection to the database to avoid database leaks.
+     */
+    public void destroy()
+    {
+        if (this.database != null && this.database.isDbLockedByCurrentThread())
+        {
+            this.database.close();
+        }
     }
 
     /**
@@ -87,13 +100,21 @@ public class BeaconsSeenProvider
 
         }
 
-        return this.database.query(BeaconsSeenTable.TABLE_NAME, null, selection, selectionArgs, null, null, null);
+        try
+        {
+            return this.database.query(BeaconsSeenTable.TABLE_NAME, null, selection, selectionArgs, null, null, null);
+        }
+        catch (SQLException e)
+        {
+            Log.e(TAG, "BeaconsSeenProvider#query()", e.getCause());
+            return null;
+        }
     }
 
     /**
      * Insert {@code values} with parameters {@code uri}.
      *
-     * @param uri parameters for the insert
+     * @param uri    parameters for the insert
      * @param values to insert
      * @return cursor with query results
      */
@@ -107,6 +128,7 @@ public class BeaconsSeenProvider
         }
         catch (final SQLException sqlException)
         {
+            Log.e(TAG, "BeaconsSeenProvider#insert()", sqlException.getCause());
         }
 
         // success
@@ -168,6 +190,7 @@ public class BeaconsSeenProvider
         }
         catch (final SQLException ex)
         {
+            Log.e(TAG, "BeaconsSeenProvider#onDelete()", ex.getCause());
         }
 
         return count;

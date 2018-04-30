@@ -8,8 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.InputFilter;
 import android.text.TextUtils;
 import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.tbruyelle.rxpermissions.RxPermissions;
 
@@ -20,13 +18,10 @@ import mobi.inthepocket.android.beacons.app.rxjava.RxObserver;
 import mobi.inthepocket.android.beacons.app.utils.InputFilterMinMax;
 import mobi.inthepocket.android.beacons.app.utils.UUIDUtils;
 import mobi.inthepocket.android.beacons.ibeaconscanner.Beacon;
-import mobi.inthepocket.android.beacons.ibeaconscanner.Error;
 import mobi.inthepocket.android.beacons.ibeaconscanner.IBeaconScanner;
 
-public class MainActivity extends AppCompatActivity implements IBeaconScanner.Callback
+public class MainActivity extends AppCompatActivity
 {
-    @BindView(R.id.textview_log)
-    TextView textViewLog;
     @BindView(R.id.textinputlayout_uuid)
     TextInputLayout textInputLayoutUuid;
     @BindView(R.id.edittext_uuid)
@@ -51,8 +46,6 @@ public class MainActivity extends AppCompatActivity implements IBeaconScanner.Ca
         this.setContentView(R.layout.activity_main);
 
         ButterKnife.bind(this);
-
-        IBeaconScanner.getInstance().setCallback(this);
 
         // add input filters on {@link EditText}s.
         this.editTextMajor.setFilters(new InputFilter[]{new InputFilterMinMax(1, 65535)});
@@ -102,30 +95,6 @@ public class MainActivity extends AppCompatActivity implements IBeaconScanner.Ca
         IBeaconScanner.getInstance().stop();
     }
 
-    //region Callback
-
-    @Override
-    public void didEnterBeacon(final Beacon beacon)
-    {
-        final String logMessage = String.format("Entered beacon with UUID %s and major %s and minor %s.", beacon.getUUID(), beacon.getMajor(), beacon.getMinor());
-        this.updateLog(logMessage);
-    }
-
-    @Override
-    public void didExitBeacon(final Beacon beacon)
-    {
-        final String logMessage = String.format("Exited beacon with UUID %s and major %s and minor %s.", beacon.getUUID(), beacon.getMajor(), beacon.getMinor());
-        this.updateLog(logMessage);
-    }
-
-    @Override
-    public void monitoringDidFail(final Error error)
-    {
-        Toast.makeText(MainActivity.this, "Could not scan due to " + error.name(), Toast.LENGTH_LONG).show();
-    }
-
-    //endregion
-
     //region View
 
     private void beaconsEnabled(final boolean isEnabled)
@@ -174,12 +143,6 @@ public class MainActivity extends AppCompatActivity implements IBeaconScanner.Ca
         return isValid;
     }
 
-    private void updateLog(final String logMessage)
-    {
-        final String logText = this.textViewLog.getText().toString();
-
-        this.textViewLog.setText(logMessage + "\n\n" + logText);
-    }
-
     //endregion
+
 }

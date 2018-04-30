@@ -32,12 +32,4 @@ public interface ScanService
      * Stops monitoring and removes all monitored {@link Beacon}s.
      */
     void stop();
-
-    /**
-     * Set the {@link IBeaconScanner.Callback} that will be notified for {@link Beacon} enters, exits or if an {@link Error}
-     * happened.
-     *
-     * @param callback that will be notified when something happens
-     */
-    void setCallback(@NonNull final IBeaconScanner.Callback callback);
 }
