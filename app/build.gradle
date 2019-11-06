@@ -15,12 +15,12 @@ if (System.env.TRAVIS == 'true') {
 }
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 29
 
     defaultConfig {
         applicationId appApplicationId
         minSdkVersion 18
-        targetSdkVersion 27
+        targetSdkVersion 29
         versionCode 2
         versionName "2"
         testInstrumentationRunner appTestRunner
@@ -48,31 +48,37 @@ android {
             preDexLibraries = false
         }
     }
+
+    // java 8 is required for Butterknife 10
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
     implementation project(':ibeaconscanner') // library to scan for iBeacons
-    implementation 'com.android.support:appcompat-v7:27.1.1'
-    implementation 'com.android.support:design:27.1.1'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'com.google.android.material:material:1.0.0'
     implementation 'io.reactivex:rxjava:1.2.0' // rxjava
     implementation 'com.tbruyelle.rxpermissions:rxpermissions:0.7.0@aar' // library to handle location permission
     implementation 'com.facebook.stetho:stetho:1.4.1' // stetho to easily see our database
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5' // leak canary to detect leaks
     releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5' // leak canary to detect leaks
-    implementation 'com.jakewharton:butterknife:8.4.0'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
+    implementation 'com.jakewharton:butterknife:10.2.0'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.0'
 
-    androidTestImplementation 'com.android.support:support-annotations:27.1.1'
+    androidTestImplementation 'androidx.annotation:annotation:1.1.0'
     androidTestImplementation('com.android.support.test:runner:0.5') {
         exclude module: 'support-annotations'
     }
     androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2') {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
-    androidTestImplementation 'com.android.support.test.uiautomator:uiautomator-v18:2.1.2'
+    androidTestImplementation 'com.android.support.test.uiautomator:uiautomator-v18:2.1.3'
     androidTestImplementation 'com.google.dexmaker:dexmaker-mockito:1.0' // for mockito
     androidTestImplementation 'com.google.dexmaker:dexmaker:1.0' // for mockito
-    androidTestImplementation 'org.mockito:mockito-core:1.10.17' // for mockito
+    androidTestImplementation 'org.mockito:mockito-core:2.28.2' // for mockito
 
     testImplementation 'junit:junit:4.12'
 }
