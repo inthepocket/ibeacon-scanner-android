@@ -52,30 +52,30 @@ android {
 }
 
 dependencies {
-    compile project(':ibeaconscanner') // library to scan for iBeacons
-    compile 'com.android.support:appcompat-v7:27.1.1'
-    compile 'com.android.support:design:27.1.1'
-    compile 'io.reactivex:rxjava:1.2.0' // rxjava
-    compile 'com.tbruyelle.rxpermissions:rxpermissions:0.7.0@aar' // library to handle location permission
-    compile 'com.facebook.stetho:stetho:1.4.1' // stetho to easily see our database
-    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5' // leak canary to detect leaks
-    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5' // leak canary to detect leaks
-    compile 'com.jakewharton:butterknife:8.4.0'
+    implementation project(':ibeaconscanner') // library to scan for iBeacons
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'com.android.support:design:27.1.1'
+    implementation 'io.reactivex:rxjava:1.2.0' // rxjava
+    implementation 'com.tbruyelle.rxpermissions:rxpermissions:0.7.0@aar' // library to handle location permission
+    implementation 'com.facebook.stetho:stetho:1.4.1' // stetho to easily see our database
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5' // leak canary to detect leaks
+    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5' // leak canary to detect leaks
+    implementation 'com.jakewharton:butterknife:8.4.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
 
-    androidTestCompile 'com.android.support:support-annotations:27.1.1'
-    androidTestCompile('com.android.support.test:runner:0.5') {
+    androidTestImplementation 'com.android.support:support-annotations:27.1.1'
+    androidTestImplementation('com.android.support.test:runner:0.5') {
         exclude module: 'support-annotations'
     }
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2') {
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2') {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
-    androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.2'
-    androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.0' // for mockito
-    androidTestCompile 'com.google.dexmaker:dexmaker:1.0' // for mockito
-    androidTestCompile 'org.mockito:mockito-core:1.10.17' // for mockito
+    androidTestImplementation 'com.android.support.test.uiautomator:uiautomator-v18:2.1.2'
+    androidTestImplementation 'com.google.dexmaker:dexmaker-mockito:1.0' // for mockito
+    androidTestImplementation 'com.google.dexmaker:dexmaker:1.0' // for mockito
+    androidTestImplementation 'org.mockito:mockito-core:1.10.17' // for mockito
 
-    testCompile 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.12'
 }
 
 sonarqube {
